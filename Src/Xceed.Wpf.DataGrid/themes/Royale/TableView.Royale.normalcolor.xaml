@@ -1428,6 +1428,38 @@
    </Style>
 
    <!--**************************
+    * STYLE: FilterRow 
+    ************************** -->
+   <Style x:Key="tableViewRoyaleNormalColorFilterRowStyle"
+          TargetType="local:FilterRow"
+          BasedOn="{StaticResource tableViewRoyaleNormalColorRowStyle}">
+
+        <!-- Use a different background and foreground than the base Row style. -->
+        <Setter Property="Background"
+              Value="{StaticResource headerBackgroundBrush}" />
+
+        <Setter Property="Foreground"
+              Value="{StaticResource headerForegroundBrush}" />
+
+        <Setter Property="local:RowSelector.Visible"
+              Value="False" />
+
+        <Setter Property="Template"
+              Value="{StaticResource tableViewFilterRowTemplate}" />
+
+        <Style.Triggers>
+            <Trigger Property="local:GroupLevelIndicatorPane.GroupLevel"
+                  Value="-1">
+                <!-- We don't want to display the Group Margins for the ColumnManagerRow. -->
+                <Setter Property="local:GroupLevelIndicatorPane.ShowIndicators"
+                    Value="False" />
+            </Trigger>
+
+        </Style.Triggers>
+
+   </Style>
+
+   <!--**************************
     * STYLE: Cell Style
     ************************** -->
    <Style x:Key="tableViewRoyaleNormalColorCellStyle"
@@ -1522,6 +1554,102 @@
 
       <Setter Property="Template"
               Value="{StaticResource tableViewColumnManagerCellTemplate}" />
+
+   </Style>
+
+   <!--**************************
+    * STYLE: FilterCell 
+    ************************** -->
+   <Style x:Key="tableViewRoyaleNormalColorFilterCellStyle"
+          TargetType="local:FilterCell">
+
+        <!-- Set the Cell's background to Transparent to make it hit-testable
+           while preserving the background drawn by the underlying Row. -->
+        <Setter Property="Background"
+              Value="Transparent" />
+
+        <Setter Property="ToolTip"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.Description}" />
+
+        <!-- In TableView, each Cell has the same width as its ParentColum's ActualWidth -->
+        <Setter Property="Width"
+              Value="{Binding RelativeSource={RelativeSource Self},Path=ParentColumn.ActualWidth}" />
+
+        <Setter Property="Padding"
+              Value="{StaticResource columnManagerCellPadding}" />
+
+        <Setter Property="HorizontalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellHorizontalContentAlignment, FallbackValue=Stretch}" />
+
+        <Setter Property="VerticalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellVerticalContentAlignment, FallbackValue=Stretch}" />
+
+        <Setter Property="Template"
+              Value="{StaticResource tableViewFilterCellTemplate}" />
+
+   </Style>
+
+   <!--**************************
+    * STYLE: FilterCellText
+    ************************** -->
+   <Style x:Key="tableViewRoyaleNormalColorFilterCellStyle"
+          TargetType="local:FilterCellText">
+
+        <!-- Set the Cell's background to Transparent to make it hit-testable
+           while preserving the background drawn by the underlying Row. -->
+        <Setter Property="Background"
+              Value="Transparent" />
+
+        <Setter Property="ToolTip"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.Description}" />
+
+        <!-- In TableView, each Cell has the same width as its ParentColum's ActualWidth -->
+        <Setter Property="Width"
+              Value="{Binding RelativeSource={RelativeSource Self},Path=ParentColumn.ActualWidth}" />
+
+        <Setter Property="Padding"
+              Value="{StaticResource columnManagerCellPadding}" />
+
+        <Setter Property="HorizontalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellHorizontalContentAlignment, FallbackValue=Stretch}" />
+
+        <Setter Property="VerticalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellVerticalContentAlignment, FallbackValue=Stretch}" />
+
+        <Setter Property="Template"
+              Value="{StaticResource tableViewFilterCellTemplate}" />
+
+   </Style>
+
+   <!--**************************
+    * STYLE: FilterCBCell 
+    ************************** -->
+   <Style x:Key="tableViewRoyaleNormalColorFilterCBCellStyle"
+          TargetType="local:FilterCBCell">
+
+        <!-- Set the Cell's background to Transparent to make it hit-testable
+           while preserving the background drawn by the underlying Row. -->
+        <Setter Property="Background"
+              Value="Transparent" />
+
+        <Setter Property="ToolTip"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.Description}" />
+
+        <!-- In TableView, each Cell has the same width as its ParentColum's ActualWidth -->
+        <Setter Property="Width"
+              Value="{Binding RelativeSource={RelativeSource Self},Path=ParentColumn.ActualWidth}" />
+
+        <Setter Property="Padding"
+              Value="{StaticResource columnManagerCellPadding}" />
+
+        <Setter Property="HorizontalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellHorizontalContentAlignment, FallbackValue=Stretch}" />
+
+        <Setter Property="VerticalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellVerticalContentAlignment, FallbackValue=Stretch}" />
+
+        <Setter Property="Template"
+              Value="{StaticResource tableViewFilterCBCellTemplate}" />
 
    </Style>
 
@@ -1987,6 +2115,10 @@
           TargetType="local:ColumnManagerRow"
           BasedOn="{StaticResource tableViewRoyaleNormalColorColumnManagerRowStyle}" />
 
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, ThemeType=views:RoyaleNormalColorTheme, TargetElementType=local:FilterRow}"
+          TargetType="local:FilterRow"
+          BasedOn="{StaticResource tableViewRoyaleNormalColorFilterRowStyle}" />
+
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, ThemeType=views:RoyaleNormalColorTheme, TargetElementType=local:Cell}"
           TargetType="local:Cell"
           BasedOn="{StaticResource tableViewRoyaleNormalColorCellStyle}" />
@@ -1998,6 +2130,18 @@
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, ThemeType=views:RoyaleNormalColorTheme, TargetElementType=local:ColumnManagerCell}"
           TargetType="local:ColumnManagerCell"
           BasedOn="{StaticResource tableViewRoyaleNormalColorColumnManagerCellStyle}" />
+
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, ThemeType=views:RoyaleNormalColorTheme, TargetElementType=local:FilterCell}"
+          TargetType="local:FilterCell"
+          BasedOn="{StaticResource tableViewRoyaleNormalColorFilterCellStyle}" />
+
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, ThemeType=views:RoyaleNormalColorTheme, TargetElementType=local:FilterCellText}"
+          TargetType="local:FilterCellText"
+          BasedOn="{StaticResource tableViewRoyaleNormalColorFilterCellTextlStyle}" />
+
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, ThemeType=views:RoyaleNormalColorTheme, TargetElementType=local:FilterCBCell}"
+          TargetType="local:FilterCBCell"
+          BasedOn="{StaticResource tableViewRoyaleNormalColorFilterCBCellStyle}" />
 
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, ThemeType=views:RoyaleNormalColorTheme, TargetElementType=local:GroupByControl}"
           TargetType="local:GroupByControl"

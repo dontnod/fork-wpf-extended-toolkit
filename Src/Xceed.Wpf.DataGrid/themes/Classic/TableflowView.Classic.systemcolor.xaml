@@ -1143,6 +1143,38 @@
    </Style>
 
    <!--**************************
+    * STYLE: FilterRow 
+    ************************** -->
+   <Style x:Key="tableflowViewClassicSystemColorFilterRowStyle"
+          TargetType="local:FilterRow"
+          BasedOn="{StaticResource tableflowViewClassicSystemColorRowStyle}">
+
+        <!-- Use a different background and foreground than the base Row style. -->
+        <Setter Property="Background"
+              Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+
+        <Setter Property="Foreground"
+              Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+
+        <Setter Property="local:RowSelector.Visible"
+              Value="False" />
+
+        <Setter Property="Template"
+              Value="{StaticResource tableflowViewFilterRowTemplate}" />
+
+        <Style.Triggers>
+            <Trigger Property="local:GroupLevelIndicatorPane.GroupLevel"
+                  Value="-1">
+                <!-- We don't want to display the Group Margins for the ColumnManagerRow. -->
+                <Setter Property="local:GroupLevelIndicatorPane.ShowIndicators"
+                    Value="False" />
+            </Trigger>
+
+        </Style.Triggers>
+
+    </Style>
+
+    <!--**************************
     * STYLE: Cell Style
     ************************** -->
    <Style x:Key="tableflowViewClassicSystemColorCellStyle"
@@ -1259,6 +1291,102 @@
       </Style.Triggers>
 
    </Style>
+
+   <!--**************************
+    * STYLE: FilterCell 
+    ************************** -->
+   <Style x:Key="tableflowViewClassicSystemColorFilterCellStyle"
+          TargetType="local:FilterCell">
+
+        <!-- Set the Cell's background to Transparent to make it hit-testable
+           while preserving the background drawn by the underlying Row. -->
+        <Setter Property="Background"
+              Value="Transparent" />
+
+        <Setter Property="ToolTip"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.Description}" />
+
+        <!-- In TableflowView, each Cell has the same width as its ParentColum's ActualWidth -->
+        <Setter Property="Width"
+              Value="{Binding RelativeSource={RelativeSource Self},Path=ParentColumn.ActualWidth}" />
+
+        <Setter Property="Padding"
+              Value="{StaticResource cellPadding}" />
+
+        <Setter Property="HorizontalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellHorizontalContentAlignment, FallbackValue=Left}" />
+
+        <Setter Property="VerticalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellVerticalContentAlignment, FallbackValue=Stretch}" />
+
+        <Setter Property="Template"
+              Value="{StaticResource tableflowViewFilterCellTemplate}" />
+
+    </Style>
+
+   <!--**************************
+    * STYLE: FilterCBCell 
+    ************************** -->
+   <Style x:Key="tableflowViewClassicSystemColorFilterCBCellStyle"
+          TargetType="local:FilterCBCell">
+
+        <!-- Set the Cell's background to Transparent to make it hit-testable
+           while preserving the background drawn by the underlying Row. -->
+        <Setter Property="Background"
+              Value="Transparent" />
+
+        <Setter Property="ToolTip"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.Description}" />
+
+        <!-- In TableflowView, each Cell has the same width as its ParentColum's ActualWidth -->
+        <Setter Property="Width"
+              Value="{Binding RelativeSource={RelativeSource Self},Path=ParentColumn.ActualWidth}" />
+
+        <Setter Property="Padding"
+              Value="{StaticResource cellPadding}" />
+
+        <Setter Property="HorizontalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellHorizontalContentAlignment, FallbackValue=Left}" />
+
+        <Setter Property="VerticalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellVerticalContentAlignment, FallbackValue=Stretch}" />
+
+        <Setter Property="Template"
+              Value="{StaticResource tableflowViewFilterCBCellTemplate}" />
+
+    </Style>
+
+  <!--**************************
+    * STYLE: FilterCellText
+    ************************** -->
+  <Style x:Key="tableflowViewClassicSystemColorFilterCellTextStyle"
+          TargetType="local:FilterCellText">
+
+    <!-- Set the Cell's background to Transparent to make it hit-testable
+           while preserving the background drawn by the underlying Row. -->
+    <Setter Property="Background"
+              Value="Transparent" />
+
+    <Setter Property="ToolTip"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.Description}" />
+
+    <!-- In TableflowView, each Cell has the same width as its ParentColum's ActualWidth -->
+    <Setter Property="Width"
+              Value="{Binding RelativeSource={RelativeSource Self},Path=ParentColumn.ActualWidth}" />
+
+    <Setter Property="Padding"
+              Value="{StaticResource cellPadding}" />
+
+    <Setter Property="HorizontalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellHorizontalContentAlignment, FallbackValue=Left}" />
+
+    <Setter Property="VerticalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellVerticalContentAlignment, FallbackValue=Stretch}" />
+
+    <Setter Property="Template"
+              Value="{StaticResource tableflowViewFilterCellTextTemplate}" />
+
+  </Style>
 
    <!--**************************
     * STYLE: GroupByControl 
@@ -1794,6 +1922,10 @@
           TargetType="local:ColumnManagerRow"
           BasedOn="{StaticResource tableflowViewClassicSystemColorColumnManagerRowStyle}" />
 
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, ThemeType=views:ClassicSystemColorTheme, TargetElementType=local:FilterRow}"
+          TargetType="local:FilterRow"
+          BasedOn="{StaticResource tableflowViewClassicSystemColorFilterRowStyle}" />
+
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, ThemeType=views:ClassicSystemColorTheme, TargetElementType=local:Cell}"
           TargetType="local:Cell"
           BasedOn="{StaticResource tableflowViewClassicSystemColorCellStyle}" />
@@ -1805,6 +1937,18 @@
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, ThemeType=views:ClassicSystemColorTheme, TargetElementType=local:ColumnManagerCell}"
           TargetType="local:ColumnManagerCell"
           BasedOn="{StaticResource tableflowViewClassicSystemColorColumnManagerCellStyle}" />
+
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, ThemeType=views:ClassicSystemColorTheme, TargetElementType=local:FilterCell}"
+          TargetType="local:FilterCell"
+          BasedOn="{StaticResource tableflowViewClassicSystemColorFilterCellStyle}" />
+
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, ThemeType=views:ClassicSystemColorTheme, TargetElementType=local:FilterCBCell}"
+          TargetType="local:FilterCBCell"
+          BasedOn="{StaticResource tableflowViewClassicSystemColorFilterCBCellStyle}" />
+
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, ThemeType=views:ClassicSystemColorTheme, TargetElementType=local:FilterCellText}"
+          TargetType="local:FilterCellText"
+          BasedOn="{StaticResource tableflowViewClassicSystemColorFilterCellTextStyle}" />
 
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, ThemeType=views:ClassicSystemColorTheme, TargetElementType=local:GroupByControl}"
           TargetType="local:GroupByControl"

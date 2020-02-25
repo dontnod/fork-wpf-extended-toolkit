@@ -382,8 +382,8 @@ namespace Xceed.Wpf.DataGrid.Views
           // width (where GroupLevelIndicator's width et al will be substracted).
           child.Measure( restrictedMeasureSize );
 
-          if( dataGridContext.ColumnStretchingManager.ColumnStretchingCalculated )
-            break;
+          //if( dataGridContext.ColumnStretchingManager.ColumnStretchingCalculated )
+          //  break;
         }
       }
 

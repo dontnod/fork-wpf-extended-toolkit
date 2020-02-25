@@ -146,16 +146,23 @@ namespace Xceed.Wpf.DataGrid
       DefaultGroupByControlTemplate = new DataTemplate();
       DefaultGroupByControlTemplate.VisualTree = new FrameworkElementFactory( typeof( HierarchicalGroupByControl ) );
       DefaultGroupByControlTemplate.Seal();
+
+      DefaultFilterRowTemplate = new DataTemplate();
+      DefaultFilterRowTemplate.VisualTree = new FrameworkElementFactory( typeof( FilterRow ) );
+      DefaultFilterRowTemplate.Seal();
+      DefaultFilterRowTemplate.VisualTree.SetValue( RowSelector.VisibleProperty, true );
     }
 
     private static DataTemplate DefaultHeaderSpacerTemplate;
     private static DataTemplate DefaultColumnManagerRowTemplate;
+    private static DataTemplate DefaultFilterRowTemplate;
     private static DataTemplate DefaultGroupByControlTemplate;
 
     internal static void AddDefaultHeadersFooters( ObservableCollection<DataTemplate> headersCollection, int mergedHeadersCount, bool areDetailsFlatten )
     {
       if( !areDetailsFlatten )
       {
+        headersCollection.Insert( 0, DetailConfiguration.DefaultFilterRowTemplate);
         headersCollection.Insert( 0, DetailConfiguration.DefaultColumnManagerRowTemplate );
         headersCollection.Insert( 0, DetailConfiguration.DefaultHeaderSpacerTemplate );
       }

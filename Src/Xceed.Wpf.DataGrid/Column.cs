@@ -30,6 +30,7 @@ namespace Xceed.Wpf.DataGrid
     #region Static Fields
 
     internal static readonly string AllowSortPropertyName = PropertyHelper.GetPropertyName( ( Column c ) => c.AllowSort );
+    internal static readonly string AllowFilterPropertyName = PropertyHelper.GetPropertyName( ( Column c ) => c.AllowFilter );
     internal static readonly string AllowGroupPropertyName = PropertyHelper.GetPropertyName( ( Column c ) => c.AllowGroup );
 #pragma warning disable 618
     internal static readonly string DisplayMemberBindingPropertyName = PropertyHelper.GetPropertyName( ( Column c ) => c.DisplayMemberBinding );
@@ -149,11 +150,33 @@ namespace Xceed.Wpf.DataGrid
 
     private bool m_allowSort = true;
 
-    #endregion AllowSort Property
+    #endregion AllowSort Property    
+    
+    #region AllowFilter Property
+
+    public override bool AllowFilter
+    {
+      get
+      {
+        return m_allowFilter;
+      }
+      set
+      {
+        if(m_allowFilter == value )
+          return;
+
+        m_allowFilter = value;
+        this.OnPropertyChanged( new PropertyChangedEventArgs( Column.AllowFilterPropertyName ) );
+      }
+    }
+
+    private bool m_allowFilter = true;
+
+    #endregion AllowFilter Property
 
     #region AllowGroup Property
 
-    public override bool AllowGroup
+        public override bool AllowGroup
     {
       get
       {

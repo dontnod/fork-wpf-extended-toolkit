@@ -67,6 +67,10 @@
           TargetType="local:ColumnManagerRow"
           BasedOn="{StaticResource tableViewLunaNormalColorColumnManagerRowStyle}" />
 
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, TargetElementType=local:FilterRow}"
+          TargetType="local:FilterRow"
+          BasedOn="{StaticResource tableViewLunaNormalColorFilterRowStyle}" />
+
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, TargetElementType=local:Cell}"
           TargetType="local:Cell"
           BasedOn="{StaticResource tableViewLunaNormalColorCellStyle}" />
@@ -78,6 +82,18 @@
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, TargetElementType=local:ColumnManagerCell}"
           TargetType="local:ColumnManagerCell"
           BasedOn="{StaticResource tableViewLunaNormalColorColumnManagerCellStyle}" />
+
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, TargetElementType=local:FilterCell}"
+          TargetType="local:FilterCell"
+          BasedOn="{StaticResource tableViewLunaNormalColorFilterCellStyle}" />
+
+  <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, TargetElementType=local:FilterCellText}"
+          TargetType="local:FilterCellText"
+          BasedOn="{StaticResource tableViewLunaNormalColorFilterCellTextStyle}" />
+
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, TargetElementType=local:FilterCBCell}"
+          TargetType="local:FilterCBCell"
+          BasedOn="{StaticResource tableViewLunaNormalColorFilterCBCellStyle}" />
 
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, TargetElementType=local:GroupByControl}"
           TargetType="local:GroupByControl"
@@ -149,6 +165,10 @@
           TargetType="local:ColumnManagerRow"
           BasedOn="{StaticResource tableflowViewLunaNormalColorColumnManagerRowStyle}" />
 
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, TargetElementType=local:FilterRow}"
+          TargetType="local:FilterRow"
+          BasedOn="{StaticResource tableflowViewLunaNormalColorFilterRowStyle}" />
+
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, TargetElementType=local:Cell}"
           TargetType="local:Cell"
           BasedOn="{StaticResource tableflowViewLunaNormalColorCellStyle}" />
@@ -160,6 +180,18 @@
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, TargetElementType=local:ColumnManagerCell}"
           TargetType="local:ColumnManagerCell"
           BasedOn="{StaticResource tableflowViewLunaNormalColorColumnManagerCellStyle}" />
+
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, TargetElementType=local:FilterCell}"
+          TargetType="local:FilterCell"
+          BasedOn="{StaticResource tableflowViewLunaNormalColorFilterCellStyle}" />
+
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, TargetElementType=local:FilterCellText}"
+          TargetType="local:FilterCellText"
+          BasedOn="{StaticResource tableflowViewLunaNormalColorFilterCellTextStyle}" />
+
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, TargetElementType=local:FilterCBCell}"
+          TargetType="local:FilterCBCell"
+          BasedOn="{StaticResource tableflowViewLunaNormalColorFilterCBCellStyle}" />
 
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, TargetElementType=local:GroupByControl}"
           TargetType="local:GroupByControl"

@@ -780,7 +780,75 @@
 
    </ControlTemplate>
 
-   <!--**************************
+    <!--**************************
+    * TEMPLATE: FilterRow 
+    ************************** -->
+    <ControlTemplate x:Key="tableViewFilterRowTemplate"
+                    TargetType="local:FilterRow">
+
+        <!-- This Grid is used to layout the GroupLevelIndicatorPane placeholder and the CellsHost panel. -->
+        <Grid x:Name="rootGrid">
+            <Grid.ColumnDefinitions>
+                <!-- HierarchicalGroupLevelIndicatorPane -->
+                <ColumnDefinition Width="Auto" />
+                <!-- GroupLevelIndicatorPane -->
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+
+                <!-- CellsHost panel -->
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- The border responsible for the visual outline of the row (gridlines and background)
+              spans the GroupLevelIndicatorPane and CellsHost Panel. Those 2 elements are not children of
+              the Border because we don't want the border to be displayed in the GroupLevelIndicatorPane. -->
+            <Border x:Name="rootBorder"
+                 Grid.Column="1"
+                 Grid.ColumnSpan="3"
+                 views:TableView.CanScrollHorizontally="False"
+                 Background="{TemplateBinding Background}"
+                 BorderBrush="{TemplateBinding BorderBrush}"
+                 BorderThickness="{TemplateBinding BorderThickness}"
+                 Padding="{TemplateBinding Padding}" />
+
+            <!-- GroupLevelIndicatorPane is a placeholder for individual GroupLevelIndicator elements that are added
+              whenever this Row is part of a group. -->
+            <local:HierarchicalGroupLevelIndicatorPane Grid.Column="0"
+                                                    views:TableView.CanScrollHorizontally="False"
+                                                    Background="{TemplateBinding Background}" />
+            <local:GroupLevelIndicatorPane x:Name="groupLevelIndicatorPane"
+                                        Grid.Column="1"
+                                        views:TableView.CanScrollHorizontally="False"
+                                        Background="{TemplateBinding Background}" />
+
+            <!-- Space reserved for alignment with data rows. -->
+            <ContentPresenter x:Name="detailsToggle"
+                           Grid.Column="2"
+                           Content="{x:Null}"
+                           ContentTemplate="{Binding RelativeSource={RelativeSource Self}, Path=(local:DataGridControl.DataGridContext).ExpandGroupGlyph}"
+                           VerticalAlignment="Top"
+                           Margin="2"
+                           OverridesDefaultStyle="True"
+                           Focusable="False"
+                           Visibility="Collapsed"
+                           views:TableView.CanScrollHorizontally="False" />
+
+            <!-- The PART_CellsHost part designates the Panel to which this Row's Cells should be added.-->
+            <Decorator x:Name="indentationDecorator"
+                    Grid.Column="3">
+                <views:FixedCellPanel x:Name="PART_CellsHost"
+                                  ColumnStretchMinWidth="{Binding RelativeSource={RelativeSource Self}, Path=(local:DataGridControl.DataGridContext).ColumnStretchMinWidth}"
+                                  ColumnStretchMode="{Binding RelativeSource={RelativeSource Self}, Path=(local:DataGridControl.DataGridContext).ColumnStretchMode}"
+                                  FixedCellCount="{Binding RelativeSource={RelativeSource Self}, Path=(local:DataGridControl.DataGridContext).FixedColumnCount, Mode=TwoWay}"
+                                  FixedColumnDropMarkPen="{Binding RelativeSource={RelativeSource Self}, Path=(local:DataGridControl.DataGridContext).FixedColumnDropMarkPen}"
+                                  Margin="{TemplateBinding BorderThickness}" />
+            </Decorator>
+
+        </Grid>
+
+    </ControlTemplate>
+
+    <!--**************************
     * TEMPLATE: Cell 
     ************************** -->
    <ControlTemplate x:Key="tableViewCellTemplate"
@@ -1298,6 +1366,500 @@
    </ControlTemplate>
 
    <!--**************************
+    * TEMPLATE: FilterCell 
+    ************************** -->
+   <ControlTemplate x:Key="tableViewFilterCellTemplate"
+                    TargetType="local:FilterCell">
+
+        <!-- This Grid is used to position the resizer Thumb over the ColumnManagerCell -->
+        <Grid>
+
+            <Border x:Name="rootBorder"
+                 Background="{TemplateBinding Background}"
+                 BorderBrush="{TemplateBinding BorderBrush}"
+                 BorderThickness="{TemplateBinding BorderThickness}">
+
+                <DockPanel>
+
+                    <Grid>
+
+                        <DockPanel Margin="{TemplateBinding Padding}">
+
+                            <StackPanel Orientation="Horizontal"
+                                 DockPanel.Dock="Top"
+                                 HorizontalAlignment="Center">
+                                <ContentPresenter x:Name="sortGlyphPresenter"
+                                          Content="{x:Null}"
+                                          ContentTemplate="{Binding RelativeSource={RelativeSource Self}, Path=(local:DataGridControl.DataGridContext).AscendingSortGlyph}"
+                                          VerticalAlignment="Top"
+                                          Visibility="Hidden" />
+                            </StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <local:CellContentPresenter x:Name="PART_CellContentPresenter"
+                                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+
+                                <Border x:Name="thumbToggleBackgroundBorder"
+                                Grid.Column="1"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="0"
+                                Background="{StaticResource horizontalHeaderBackgroundBrush}">
+
+                                    <ToggleButton x:Name="toggleButton"
+                                         Focusable="False"
+                                         VerticalAlignment="Stretch"
+                                         Visibility="Collapsed"
+                                         Margin="2,0,0,0"
+                                         Opacity="0.5" />
+
+                                </Border>
+                            </Grid>
+
+                        </DockPanel>
+
+                        <Border x:Name="delimiterBorder"
+                          BorderThickness="1,0,1,0"
+                          BorderBrush="{StaticResource rowSelectorDelimiterBorderBrush}" />
+                    </Grid>
+
+                </DockPanel>
+
+            </Border>
+
+            <!-- Thumb that is used to resize the Column. -->
+            <Thumb x:Name="PART_ColumnResizerThumbLeft"
+                Style="{StaticResource invisibleThumbStyle}"
+                HorizontalAlignment="Left" />
+
+            <!-- Thumb that is used to resize the Column. -->
+            <Thumb x:Name="PART_ColumnResizerThumb"
+                Style="{StaticResource invisibleThumbStyle}"
+                HorizontalAlignment="Right" />
+
+        </Grid>
+
+        <ControlTemplate.Triggers>
+            <!-- The following triggers allows the content to correctly align to the center when the mouse is over the ColumnManagerCell and the HorizontalContentAlignment is Center -->
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Value="Visible"
+                          Binding="{Binding ElementName=toggleButton, Path=Visibility}" />
+                    <Condition Value="Center"
+                          Binding="{Binding RelativeSource={RelativeSource Self},
+                        Path=HorizontalContentAlignment}" />
+                </MultiDataTrigger.Conditions>
+
+                <Setter TargetName="PART_CellContentPresenter"
+                    Property="Margin"
+                    Value="19,0,0,0" />
+            </MultiDataTrigger>
+
+            <!-- The following 2 triggers allow the appropriate Sort Glyph to be displayed
+              depending on the ParentColumn's SortDirection. -->
+
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.SortDirection}"
+                      Value="Ascending">
+
+                <Setter TargetName="sortGlyphPresenter"
+                    Property="Visibility"
+                    Value="Visible" />
+
+                <Setter TargetName="rootBorder"
+                    Property="BorderBrush"
+                    Value="{StaticResource columnManagerCellHotBorderBrush}" />
+
+                <Setter TargetName="rootBorder"
+                    Property="Background"
+                    Value="{StaticResource columnManagerCellHotBackgroundBrush}" />
+
+                <Setter TargetName="thumbToggleBackgroundBorder"
+                    Property="Background"
+                    Value="{StaticResource columnManagerCellHotBackgroundBrush}" />
+
+                <Setter TargetName="delimiterBorder"
+                    Property="Visibility"
+                    Value="Hidden" />
+
+            </DataTrigger>
+
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.SortDirection}"
+                      Value="Descending">
+
+                <Setter TargetName="sortGlyphPresenter"
+                    Property="ContentPresenter.ContentTemplate"
+                    Value="{Binding RelativeSource={RelativeSource Self}, Path=(local:DataGridControl.DataGridContext).DescendingSortGlyph}" />
+
+                <Setter TargetName="sortGlyphPresenter"
+                    Property="Visibility"
+                    Value="Visible" />
+
+                <Setter TargetName="rootBorder"
+                    Property="BorderBrush"
+                    Value="{StaticResource columnManagerCellHotBorderBrush}" />
+
+                <Setter TargetName="rootBorder"
+                    Property="Background"
+                    Value="{StaticResource columnManagerCellHotBackgroundBrush}" />
+
+                <Setter TargetName="thumbToggleBackgroundBorder"
+                    Property="Background"
+                    Value="{StaticResource columnManagerCellHotBackgroundBrush}" />
+
+                <Setter TargetName="delimiterBorder"
+                    Property="Visibility"
+                    Value="Hidden" />
+
+            </DataTrigger>
+
+            <Trigger Property="IsMouseOver"
+                  Value="True">
+
+                <Setter TargetName="rootBorder"
+                    Property="BorderBrush"
+                    Value="{StaticResource columnManagerCellHotBorderBrush}" />
+
+                <Setter TargetName="rootBorder"
+                    Property="Background"
+                    Value="{StaticResource columnManagerCellHotBackgroundBrush}" />
+
+                <Setter TargetName="delimiterBorder"
+                    Property="Visibility"
+                    Value="Hidden" />
+
+                <Setter TargetName="thumbToggleBackgroundBorder"
+                    Property="Background"
+                    Value="{StaticResource columnManagerCellHotBackgroundBrush}" />
+
+            </Trigger>
+
+            <Trigger Property="IsPressed"
+                  Value="True">
+
+                <Setter TargetName="rootBorder"
+                    Property="BorderBrush"
+                    Value="{StaticResource columnManagerCellPressedBorderBrush}" />
+
+                <Setter TargetName="rootBorder"
+                    Property="Background"
+                    Value="{StaticResource columnManagerCellPressedBackgroundBrush}" />
+
+                <Setter TargetName="thumbToggleBackgroundBorder"
+                    Property="Background"
+                    Value="{StaticResource columnManagerCellPressedBackgroundBrush}" />
+
+                <Setter TargetName="delimiterBorder"
+                    Property="Visibility"
+                    Value="Hidden" />
+
+            </Trigger>
+
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.HasFixedWidth}"
+                          Value="True" />
+
+                    <!-- Don't disable resizing if ColumnStretching can be disabled by an 
+                    end-user resize. -->
+                    <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=(local:DataGridControl.DataGridContext).RemoveColumnStretchingOnResize}"
+                          Value="False" />
+                </MultiDataTrigger.Conditions>
+
+                <Setter TargetName="PART_ColumnResizerThumb"
+                    Property="IsEnabled"
+                    Value="False" />
+            </MultiDataTrigger>
+
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.PreviousVisibleColumn.HasFixedWidth}"
+                          Value="True" />
+
+                    <!-- Don't disable resizing if ColumnStretching can be disabled by an 
+                    end-user resize. -->
+                    <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=(local:DataGridControl.DataGridContext).RemoveColumnStretchingOnResize}"
+                          Value="False" />
+                </MultiDataTrigger.Conditions>
+
+                <Setter TargetName="PART_ColumnResizerThumbLeft"
+                    Property="IsEnabled"
+                    Value="False" />
+            </MultiDataTrigger>
+
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=ParentRow.AllowColumnResize}"
+                      Value="False">
+                <Setter TargetName="PART_ColumnResizerThumb"
+                    Property="IsEnabled"
+                    Value="False" />
+                <Setter TargetName="PART_ColumnResizerThumbLeft"
+                    Property="IsEnabled"
+                    Value="False" />
+            </DataTrigger>
+
+        </ControlTemplate.Triggers>
+
+    </ControlTemplate>
+
+   <!--**************************
+    * TEMPLATE: FilterCBCell 
+    ************************** -->
+   <ControlTemplate x:Key="tableViewFilterCBCellTemplate"
+                    TargetType="local:FilterCBCell">
+
+        <!-- This Grid is used to position the resizer Thumb over the ColumnManagerCell -->
+        <Grid>
+
+            <Border x:Name="rootBorder"
+                 Background="{TemplateBinding Background}"
+                 BorderBrush="{TemplateBinding BorderBrush}"
+                 BorderThickness="{TemplateBinding BorderThickness}">
+
+                <DockPanel>
+
+                    <Grid>
+
+                        <DockPanel Margin="{TemplateBinding Padding}">
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ComboBox x:Name="CellPresenter" ItemsSource="{TemplateBinding ItemsFilters}" StaysOpenOnEdit="True" >
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <CheckBox Content="{Binding Path=Item}" IsChecked="{Binding Path=IsChecked}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+
+                                <Border x:Name="thumbToggleBackgroundBorder"
+                                Grid.Column="1"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="0"
+                                Background="{StaticResource horizontalHeaderBackgroundBrush}">
+
+                                    <ToggleButton x:Name="toggleButton"
+                                         Focusable="False"
+                                         VerticalAlignment="Stretch"
+                                         Visibility="Collapsed"
+                                         Margin="2,0,0,0"
+                                         Opacity="0.5" />
+
+                                </Border>
+                            </Grid>
+
+                        </DockPanel>
+
+                        <Border x:Name="delimiterBorder"
+                          BorderThickness="1,0,1,0"
+                          BorderBrush="{StaticResource rowSelectorDelimiterBorderBrush}" />
+                    </Grid>
+
+                </DockPanel>
+
+            </Border>
+
+        </Grid>
+
+        <ControlTemplate.Triggers>
+
+            <Trigger Property="IsMouseOver"
+                  Value="True">
+
+                <Setter TargetName="rootBorder"
+                    Property="BorderBrush"
+                    Value="{StaticResource columnManagerCellHotBorderBrush}" />
+
+                <Setter TargetName="rootBorder"
+                    Property="Background"
+                    Value="{StaticResource columnManagerCellHotBackgroundBrush}" />
+
+                <Setter TargetName="delimiterBorder"
+                    Property="Visibility"
+                    Value="Hidden" />
+
+                <Setter TargetName="thumbToggleBackgroundBorder"
+                    Property="Background"
+                    Value="{StaticResource columnManagerCellHotBackgroundBrush}" />
+
+            </Trigger>
+
+            <Trigger Property="IsPressed"
+                  Value="True">
+
+                <Setter TargetName="rootBorder"
+                    Property="BorderBrush"
+                    Value="{StaticResource columnManagerCellPressedBorderBrush}" />
+
+                <Setter TargetName="rootBorder"
+                    Property="Background"
+                    Value="{StaticResource columnManagerCellPressedBackgroundBrush}" />
+
+                <Setter TargetName="thumbToggleBackgroundBorder"
+                    Property="Background"
+                    Value="{StaticResource columnManagerCellPressedBackgroundBrush}" />
+
+                <Setter TargetName="delimiterBorder"
+                    Property="Visibility"
+                    Value="Hidden" />
+
+            </Trigger>
+
+        </ControlTemplate.Triggers>
+
+    </ControlTemplate>
+
+  <!--**************************
+    * TEMPLATE: FilterCellText
+    ************************** -->
+  <ControlTemplate x:Key="tableViewFilterCellTextTemplate"
+                    TargetType="local:FilterCellText">
+
+    <!-- This Grid is used to position the resizer Thumb over the ColumnManagerCell -->
+    <Grid>
+
+      <Border x:Name="rootBorder"
+                 Background="{TemplateBinding Background}"
+                 BorderBrush="{TemplateBinding BorderBrush}"
+                 BorderThickness="{TemplateBinding BorderThickness}">
+
+        <DockPanel>
+
+          <Grid>
+
+            <DockPanel Margin="{TemplateBinding Padding}">
+
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="CellPresenter" Text="{TemplateBinding FilterText}"/>
+
+                <Border x:Name="thumbToggleBackgroundBorder"
+                                Grid.Column="1"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="0"
+                                Background="{StaticResource horizontalHeaderBackgroundBrush}">
+
+                  <ToggleButton x:Name="toggleButton"
+                                         Focusable="False"
+                                         VerticalAlignment="Stretch"
+                                         Visibility="Collapsed"
+                                         Margin="2,0,0,0"
+                                         Opacity="0.5" />
+
+                </Border>
+              </Grid>
+
+            </DockPanel>
+
+            <Border x:Name="delimiterBorder"
+                          BorderThickness="1,0,1,0"
+                          BorderBrush="{StaticResource rowSelectorDelimiterBorderBrush}" />
+          </Grid>
+
+        </DockPanel>
+
+      </Border>
+
+    </Grid>
+
+    <ControlTemplate.Triggers>
+
+      <Trigger Property="IsMouseOver"
+                  Value="True">
+
+        <Setter TargetName="rootBorder"
+                    Property="BorderBrush"
+                    Value="{StaticResource columnManagerCellHotBorderBrush}" />
+
+        <Setter TargetName="rootBorder"
+                    Property="Background"
+                    Value="{StaticResource columnManagerCellHotBackgroundBrush}" />
+
+        <Setter TargetName="delimiterBorder"
+                    Property="Visibility"
+                    Value="Hidden" />
+
+        <Setter TargetName="thumbToggleBackgroundBorder"
+                    Property="Background"
+                    Value="{StaticResource columnManagerCellHotBackgroundBrush}" />
+
+      </Trigger>
+
+      <Trigger Property="IsPressed"
+                  Value="True">
+
+        <Setter TargetName="rootBorder"
+                    Property="BorderBrush"
+                    Value="{StaticResource columnManagerCellPressedBorderBrush}" />
+
+        <Setter TargetName="rootBorder"
+                    Property="Background"
+                    Value="{StaticResource columnManagerCellPressedBackgroundBrush}" />
+
+        <Setter TargetName="thumbToggleBackgroundBorder"
+                    Property="Background"
+                    Value="{StaticResource columnManagerCellPressedBackgroundBrush}" />
+
+        <Setter TargetName="delimiterBorder"
+                    Property="Visibility"
+                    Value="Hidden" />
+
+      </Trigger>
+
+      <MultiDataTrigger>
+        <MultiDataTrigger.Conditions>
+          <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.HasFixedWidth}"
+                          Value="True" />
+
+          <!-- Don't disable resizing if ColumnStretching can be disabled by an 
+                    end-user resize. -->
+          <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=(local:DataGridControl.DataGridContext).RemoveColumnStretchingOnResize}"
+                          Value="False" />
+        </MultiDataTrigger.Conditions>
+
+        <Setter TargetName="PART_ColumnResizerThumb"
+                    Property="IsEnabled"
+                    Value="False" />
+      </MultiDataTrigger>
+
+      <MultiDataTrigger>
+        <MultiDataTrigger.Conditions>
+          <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.PreviousVisibleColumn.HasFixedWidth}"
+                          Value="True" />
+
+          <!-- Don't disable resizing if ColumnStretching can be disabled by an 
+                    end-user resize. -->
+          <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=(local:DataGridControl.DataGridContext).RemoveColumnStretchingOnResize}"
+                          Value="False" />
+        </MultiDataTrigger.Conditions>
+
+        <Setter TargetName="PART_ColumnResizerThumbLeft"
+                    Property="IsEnabled"
+                    Value="False" />
+      </MultiDataTrigger>
+
+      <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=ParentRow.AllowColumnResize}"
+                      Value="False">
+        <Setter TargetName="PART_ColumnResizerThumb"
+                    Property="IsEnabled"
+                    Value="False" />
+        <Setter TargetName="PART_ColumnResizerThumbLeft"
+                    Property="IsEnabled"
+                    Value="False" />
+      </DataTrigger>
+
+    </ControlTemplate.Triggers>
+
+  </ControlTemplate>
+
+  <!--**************************
     * TEMPLATE: GroupHeaderControl
     ************************** -->
    <ControlTemplate x:Key="tableViewGroupHeaderControlTemplate"
@@ -2220,8 +2782,41 @@
       </Style.Triggers>
 
    </Style>
+    
+    <!--**************************
+    * STYLE: FilterRow 
+    ************************** -->
+    <Style x:Key="tableViewAeroNormalColorFilterRowStyle"
+          TargetType="local:FilterRow"
+          BasedOn="{StaticResource tableViewAeroNormalColorRowStyle}">
 
-   <!--**************************
+        <!-- Use a different background and foreground than the base Row style. -->
+        <Setter Property="Background"
+              Value="{StaticResource horizontalHeaderBackgroundBrush}" />
+
+        <Setter Property="Foreground"
+              Value="{StaticResource headerForegroundBrush}" />
+
+        <!-- We don't want to display a RowSelector for the ColumnManagerRow. -->
+        <Setter Property="local:RowSelector.Visible"
+              Value="False" />
+
+        <Setter Property="Template"
+              Value="{StaticResource tableViewFilterRowTemplate}" />
+
+        <Style.Triggers>
+            <Trigger Property="local:GroupLevelIndicatorPane.GroupLevel"
+                  Value="-1">
+                <!-- We don't want to display the Group Margins for the ColumnManagerRow. -->
+                <Setter Property="local:GroupLevelIndicatorPane.ShowIndicators"
+                    Value="False" />
+            </Trigger>
+
+        </Style.Triggers>
+
+    </Style>
+
+    <!--**************************
     * STYLE: Cell Style
     ************************** -->
    <Style x:Key="tableViewAeroNormalColorCellStyle"
@@ -2324,6 +2919,114 @@
    </Style>
 
    <!--**************************
+    * STYLE: FilterCell 
+    ************************** -->
+   <Style x:Key="tableViewAeroNormalColorFilterCellStyle"
+          TargetType="local:FilterCell">
+
+        <Setter Property="BorderBrush"
+              Value="{StaticResource columnManagerCellBorderBrush}" />
+
+        <Setter Property="BorderThickness"
+              Value="1" />
+
+        <Setter Property="Background"
+              Value="Transparent" />
+
+        <Setter Property="ToolTip"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.Description}" />
+
+        <!-- In TableView, each Cell has the same width as its ParentColum's ActualWidth -->
+        <Setter Property="Width"
+              Value="{Binding RelativeSource={RelativeSource Self},Path=ParentColumn.ActualWidth}" />
+
+        <Setter Property="Padding"
+              Value="{StaticResource columnManagerCellPadding}" />
+
+        <Setter Property="HorizontalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellHorizontalContentAlignment, FallbackValue=Stretch}" />
+
+        <Setter Property="VerticalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellVerticalContentAlignment, FallbackValue=Stretch}" />
+
+        <Setter Property="Template"
+              Value="{StaticResource tableViewFilterCellTemplate}" />
+
+    </Style>
+
+   <!--**************************
+    * STYLE: FilterCBCell 
+    ************************** -->
+   <Style x:Key="tableViewAeroNormalColorFilterCBCellStyle"
+          TargetType="local:FilterCBCell">
+
+        <Setter Property="BorderBrush"
+              Value="{StaticResource columnManagerCellBorderBrush}" />
+
+        <Setter Property="BorderThickness"
+              Value="1" />
+
+        <Setter Property="Background"
+              Value="Transparent" />
+
+        <Setter Property="ToolTip"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.Description}" />
+
+        <!-- In TableView, each Cell has the same width as its ParentColum's ActualWidth -->
+        <Setter Property="Width"
+              Value="{Binding RelativeSource={RelativeSource Self},Path=ParentColumn.ActualWidth}" />
+
+        <Setter Property="Padding"
+              Value="{StaticResource columnManagerCellPadding}" />
+
+        <Setter Property="HorizontalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellHorizontalContentAlignment, FallbackValue=Stretch}" />
+
+        <Setter Property="VerticalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellVerticalContentAlignment, FallbackValue=Stretch}" />
+
+        <Setter Property="Template"
+              Value="{StaticResource tableViewFilterCBCellTemplate}" />
+
+   </Style>
+
+   <!--**************************
+    * STYLE: FilterCellText
+    ************************** -->
+   <Style x:Key="tableViewAeroNormalColorFilterCellTextStyle"
+          TargetType="local:FilterCellText">
+
+    <Setter Property="BorderBrush"
+              Value="{StaticResource columnManagerCellBorderBrush}" />
+
+    <Setter Property="BorderThickness"
+              Value="1" />
+
+    <Setter Property="Background"
+              Value="Transparent" />
+
+    <Setter Property="ToolTip"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.Description}" />
+
+    <!-- In TableView, each Cell has the same width as its ParentColum's ActualWidth -->
+    <Setter Property="Width"
+              Value="{Binding RelativeSource={RelativeSource Self},Path=ParentColumn.ActualWidth}" />
+
+    <Setter Property="Padding"
+              Value="{StaticResource columnManagerCellPadding}" />
+
+    <Setter Property="HorizontalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellHorizontalContentAlignment, FallbackValue=Stretch}" />
+
+    <Setter Property="VerticalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellVerticalContentAlignment, FallbackValue=Stretch}" />
+
+    <Setter Property="Template"
+              Value="{StaticResource tableViewFilterCellTextTemplate}" />
+
+   </Style>
+
+  <!--**************************
     * STYLE: GroupByControl 
     ************************** -->
    <Style x:Key="tableViewAeroNormalColorGroupByControlStyle"
@@ -2730,7 +3433,11 @@
           TargetType="local:ColumnManagerRow"
           BasedOn="{StaticResource tableViewAeroNormalColorColumnManagerRowStyle}" />
 
-   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, ThemeType=views:AeroNormalColorTheme, TargetElementType=local:Cell}"
+    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, ThemeType=views:AeroNormalColorTheme, TargetElementType=local:FilterRow}"
+          TargetType="local:FilterRow"
+          BasedOn="{StaticResource tableViewAeroNormalColorFilterRowStyle}" />
+
+    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, ThemeType=views:AeroNormalColorTheme, TargetElementType=local:Cell}"
           TargetType="local:Cell"
           BasedOn="{StaticResource tableViewAeroNormalColorCellStyle}" />
 
@@ -2741,6 +3448,18 @@
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, ThemeType=views:AeroNormalColorTheme, TargetElementType=local:ColumnManagerCell}"
           TargetType="local:ColumnManagerCell"
           BasedOn="{StaticResource tableViewAeroNormalColorColumnManagerCellStyle}" />
+
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, ThemeType=views:AeroNormalColorTheme, TargetElementType=local:FilterCell}"
+          TargetType="local:FilterCell"
+          BasedOn="{StaticResource tableViewAeroNormalColorFilterCellStyle}" />
+
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, ThemeType=views:AeroNormalColorTheme, TargetElementType=local:FilterCBCell}"
+          TargetType="local:FilterCBCell"
+          BasedOn="{StaticResource tableViewAeroNormalColorFilterCBCellStyle}" />
+
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, ThemeType=views:AeroNormalColorTheme, TargetElementType=local:FilterCellText}"
+          TargetType="local:FilterCellText"
+          BasedOn="{StaticResource tableViewAeroNormalColorFilterCellTextStyle}" />
 
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, ThemeType=views:AeroNormalColorTheme, TargetElementType=local:GroupByControl}"
           TargetType="local:GroupByControl"

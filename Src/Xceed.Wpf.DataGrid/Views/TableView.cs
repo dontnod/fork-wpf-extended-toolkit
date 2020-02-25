@@ -81,6 +81,10 @@ namespace Xceed.Wpf.DataGrid.Views
       TableView.DefaultColumnManagerRowTemplate.VisualTree = new FrameworkElementFactory( typeof( ColumnManagerRow ) );
       TableView.DefaultColumnManagerRowTemplate.Seal();
 
+      TableView.DefaultFilterRowTemplate = new DataTemplate();
+      TableView.DefaultFilterRowTemplate.VisualTree = new FrameworkElementFactory( typeof( FilterRow ) );
+      TableView.DefaultFilterRowTemplate.Seal();
+
       TableView.DefaultGroupByControlTemplate = new DataTemplate();
       FrameworkElementFactory groupByControl = new FrameworkElementFactory( typeof( HierarchicalGroupByControl ) );
       groupByControl.SetValue( TableView.CanScrollHorizontallyProperty, false );
@@ -932,6 +936,7 @@ namespace Xceed.Wpf.DataGrid.Views
 
     protected override void AddDefaultHeadersFooters()
     {
+      this.FixedHeaders.Insert( 0, TableView.DefaultFilterRowTemplate );
       this.FixedHeaders.Insert( 0, TableView.DefaultColumnManagerRowTemplate );
       this.FixedHeaders.Insert( 0, TableView.DefaultGroupByControlTemplate );
     }
@@ -944,6 +949,7 @@ namespace Xceed.Wpf.DataGrid.Views
     }
 
     private static readonly DataTemplate DefaultColumnManagerRowTemplate;
+    private static readonly DataTemplate DefaultFilterRowTemplate;
     private static readonly DataTemplate DefaultGroupByControlTemplate;
   }
 }

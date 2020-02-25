@@ -31,6 +31,12 @@ using Xceed.Wpf.DataGrid.Views;
 
 namespace Xceed.Wpf.DataGrid
 {
+  public enum ColumnType
+  {
+    Text,
+    ComboBox
+  }
+
   [DebuggerDisplay( "FieldName = {FieldName}" )]
   public abstract class ColumnBase : Freezable, INotifyPropertyChanged, IWeakEventListener
   {
@@ -804,21 +810,37 @@ namespace Xceed.Wpf.DataGrid
       }
     }
 
+        #endregion
+
+    #region AllowFilter Property
+
+    public virtual bool AllowFilter
+        {
+        get
+        {
+            return false;
+        }
+        set
+        {
+            throw new NotSupportedException("An attempt was made to set the AllowSort property of a column that does not support sorting.");
+        }
+    }
+
     #endregion
 
     #region AllowGroup Property
 
     public virtual bool AllowGroup
+{
+    get
     {
-      get
-      {
-        return false;
-      }
-      set
-      {
-        throw new NotSupportedException( "An attempt was made to set the AllowGroup property of a column that does not support grouping." );
-      }
+    return false;
     }
+    set
+    {
+    throw new NotSupportedException( "An attempt was made to set the AllowGroup property of a column that does not support grouping." );
+    }
+}
 
     #endregion
 
