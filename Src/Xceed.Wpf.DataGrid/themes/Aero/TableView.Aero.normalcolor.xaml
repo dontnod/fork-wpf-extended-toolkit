@@ -1813,48 +1813,6 @@
 
       </Trigger>
 
-      <MultiDataTrigger>
-        <MultiDataTrigger.Conditions>
-          <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.HasFixedWidth}"
-                          Value="True" />
-
-          <!-- Don't disable resizing if ColumnStretching can be disabled by an 
-                    end-user resize. -->
-          <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=(local:DataGridControl.DataGridContext).RemoveColumnStretchingOnResize}"
-                          Value="False" />
-        </MultiDataTrigger.Conditions>
-
-        <Setter TargetName="PART_ColumnResizerThumb"
-                    Property="IsEnabled"
-                    Value="False" />
-      </MultiDataTrigger>
-
-      <MultiDataTrigger>
-        <MultiDataTrigger.Conditions>
-          <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.PreviousVisibleColumn.HasFixedWidth}"
-                          Value="True" />
-
-          <!-- Don't disable resizing if ColumnStretching can be disabled by an 
-                    end-user resize. -->
-          <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=(local:DataGridControl.DataGridContext).RemoveColumnStretchingOnResize}"
-                          Value="False" />
-        </MultiDataTrigger.Conditions>
-
-        <Setter TargetName="PART_ColumnResizerThumbLeft"
-                    Property="IsEnabled"
-                    Value="False" />
-      </MultiDataTrigger>
-
-      <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=ParentRow.AllowColumnResize}"
-                      Value="False">
-        <Setter TargetName="PART_ColumnResizerThumb"
-                    Property="IsEnabled"
-                    Value="False" />
-        <Setter TargetName="PART_ColumnResizerThumbLeft"
-                    Property="IsEnabled"
-                    Value="False" />
-      </DataTrigger>
-
     </ControlTemplate.Triggers>
 
   </ControlTemplate>

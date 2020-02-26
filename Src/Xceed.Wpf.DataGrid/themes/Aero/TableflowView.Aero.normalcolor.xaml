@@ -1867,24 +1867,6 @@
 
         <ControlTemplate.Triggers>
 
-            <!-- The following triggers allows the content to correctly align to the center when the mouse is over the ColumnManagerCell and the HorizontalContentAlignment is Center -->
-            <MultiDataTrigger>
-                <MultiDataTrigger.Conditions>
-                    <Condition Value="Visible"
-                          Binding="{Binding ElementName=toggleButton, Path=Visibility}" />
-                    <Condition Value="Center"
-                          Binding="{Binding RelativeSource={RelativeSource Self},
-                        Path=HorizontalContentAlignment}" />
-                </MultiDataTrigger.Conditions>
-
-                <Setter TargetName="PART_CellContentPresenter"
-                    Property="Margin"
-                    Value="19,0,0,0" />
-            </MultiDataTrigger>
-
-            <!-- The following 2 triggers allow the appropriate Sort Glyph to be displayed
-              depending on the ParentColumn's SortDirection. -->
-
             <Trigger Property="IsMouseOver"
                   Value="True">
 
@@ -1900,10 +1882,6 @@
                     Property="Visibility"
                     Value="Hidden" />
 
-                <Setter TargetName="thumbToggleBackgroundBorder"
-                    Property="Background"
-                    Value="{StaticResource columnManagerCellHotBackgroundBrush}" />
-
             </Trigger>
 
             <Trigger Property="IsPressed"
@@ -1914,10 +1892,6 @@
                     Value="{StaticResource columnManagerCellPressedBorderBrush}" />
 
                 <Setter TargetName="rootBorder"
-                    Property="Background"
-                    Value="{StaticResource columnManagerCellPressedBackgroundBrush}" />
-
-                <Setter TargetName="thumbToggleBackgroundBorder"
                     Property="Background"
                     Value="{StaticResource columnManagerCellPressedBackgroundBrush}" />
 
