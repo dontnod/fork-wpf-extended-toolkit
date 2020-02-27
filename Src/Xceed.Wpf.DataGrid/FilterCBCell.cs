@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 using Xceed.Wpf.DataGrid;
 using Xceed.Wpf.DataGrid.Views;
 
@@ -55,6 +56,8 @@ namespace Xceed.Wpf.DataGrid
         {
             this.ReadOnly = true;
             this.ItemsFilters = new ObservableCollection<FilterItem>();
+            this.ClearAll = new ActionCommand((o) => OnClearAll());
+            this.CheckAll = new ActionCommand((o) => OnCheckAll());
         }
 
         //#region IsPressed Read-Only Property
@@ -151,7 +154,11 @@ namespace Xceed.Wpf.DataGrid
             }
         }
 
-        #endregion
+    #endregion
+
+        public ICommand ClearAll { get; set; }
+
+        public ICommand CheckAll { get; set; }
 
         public override void OnApplyTemplate()
         {
@@ -247,6 +254,22 @@ namespace Xceed.Wpf.DataGrid
                     fr.RemoveFilter(ParentColumn.FieldName);
                 dataGridContext.Items.Filter = new Predicate<object>(fr.ApplyTotalFilter);
             }
+        }
+
+        private void OnClearAll()
+        {
+          foreach(var item in ItemsFilters)
+          {
+            item.IsChecked = false;
+          }
+        }
+
+        private void OnCheckAll()
+        {
+          foreach (var item in ItemsFilters)
+          {
+            item.IsChecked = true;
+          }
         }
 
     }
