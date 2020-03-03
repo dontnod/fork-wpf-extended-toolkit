@@ -94,6 +94,14 @@ namespace Xceed.Wpf.DataGrid
             return true;
         }
 
+        public void SaveFilters()
+        {
+           foreach(var filter in m_filters)
+           {
+               
+           }
+        }
+
         #endregion
 
         protected override Cell CreateCell(ColumnBase column)
