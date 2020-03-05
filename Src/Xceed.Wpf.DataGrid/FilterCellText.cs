@@ -60,20 +60,25 @@ namespace Xceed.Wpf.DataGrid
             tb.TextChanged += FilterChanged;
         }
 
-        protected override void InitializeCore(DataGridContext dataGridContext, Row parentRow, ColumnBase parentColumn)
+        public override void LoadFilter()
         {
-            base.InitializeCore(dataGridContext, parentRow, parentColumn);
-
-            //Initialize filter if already registered on filter row. 
-            FilterRow fRow = parentRow as FilterRow;
+            FilterRow fRow = ParentRow as FilterRow;
             if (fRow != null)
             {
-                TextFilter filter = fRow.GetFilter(parentColumn.FieldName) as TextFilter;
+                TextFilter filter = fRow.GetFilter(ParentColumn.FieldName) as TextFilter;
                 if (filter != null )
                 {
                     FilterText = filter.Filter;
                 }
             }
+        }
+
+        protected override void InitializeCore(DataGridContext dataGridContext, Row parentRow, ColumnBase parentColumn)
+        {
+            base.InitializeCore(dataGridContext, parentRow, parentColumn);
+
+            //Initialize filter if already registered on filter row. 
+            LoadFilter();
         }
 
         protected internal override void PrepareDefaultStyleKey(ViewBase view)

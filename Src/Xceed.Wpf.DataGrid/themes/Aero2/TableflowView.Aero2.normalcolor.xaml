@@ -996,11 +996,11 @@
                                 Margin="1,0,1,0" />
 
                 <ToggleButton x:Name="toggleButton"
-                                      Focusable="False"
-                                      VerticalAlignment="Stretch"
-                                      Visibility="Collapsed"
-                                      Margin="2,0,0,0"
-                                      Opacity="0.5" />
+                              Focusable="False"
+                              VerticalAlignment="Stretch"
+                              Visibility="Collapsed"
+                              Margin="2,0,0,0"
+                              Opacity="0.5" />
               </Grid>
             </Border>
 
@@ -1031,12 +1031,9 @@
                     PlacementTarget="{Binding ElementName=CellPresenter}"
                     Placement="Bottom">
                       <DockPanel>
-                        <Button Content="Clear All" DockPanel.Dock="Top" Command="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ClearAll}">
+                        <Button Content="Clear All" DockPanel.Dock="Top" Command="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ClearAll}"/>
+                        <Button Content="Check All" DockPanel.Dock="Top" Command="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CheckAll}"/>
 
-                        </Button>
-                        <Button Content="Check All" DockPanel.Dock="Top" Command="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CheckAll}">
-
-                        </Button>
                         <ListBox ItemsSource="{TemplateBinding ItemsFilters}">
                           <ListBox.ItemTemplate>
                             <DataTemplate>

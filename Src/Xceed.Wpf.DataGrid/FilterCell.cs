@@ -75,6 +75,10 @@ namespace Xceed.Wpf.DataGrid
             base.OnApplyTemplate();
         }
 
+        public virtual void LoadFilter()
+        {
+        }
+
         protected override void InitializeCore(DataGridContext dataGridContext, Row parentRow, ColumnBase parentColumn)
         {
             base.InitializeCore(dataGridContext, parentRow, parentColumn);

@@ -5,22 +5,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using Xceed.Wpf.DataGrid.Utils.JsonSerialization;
 
 namespace Xceed.Wpf.DataGrid
 {
+  [JsonConverter(typeof(FilterJsonConverter))]
   public abstract class IFilter
   {
+    public int FilterType { get; set; }
     public abstract bool ApplyFilter(object obj, string property);
-
-    public abstract void SerializeFilter();
   }
 
   public class ListFilter : IFilter
   {
-    public List<string> Filters;
+    public List<string> Filters { get; set; } = new List<string>();
+    public bool ShouldSerializeFilters() => Filters.Any();
 
     public ListFilter(List<string> filters)
     {
+      FilterType = 1;
+
       Filters = new List<string>(filters);
     }
 
@@ -31,14 +36,6 @@ namespace Xceed.Wpf.DataGrid
 
       string value = obj.GetType().GetProperty(property).GetValue(obj, null).ToString();
       return Filters.Contains(value);
-    }
-
-    public override void SerializeFilter()
-    {
-      foreach (var filter in Filters)
-      {
-
-      }
     }
   }
 
@@ -58,21 +55,23 @@ namespace Xceed.Wpf.DataGrid
     private static Regex s_EQUAL = new Regex("^\"(.*?)\"$");
     private static Regex s_CONTAINS = new Regex("^\"\\*(.*?)\\*\"$");
 
-    public static string[] s_KEYWORDS = {
+    private static string[] s_KEYWORDS = {
       s_AND.ToString(),
       s_OR.ToString(),
       s_NULL
     };
+    private static string[] s_ORAND = { s_AND.ToString(), s_OR.ToString() };
 
-    public static string[] s_ORAND = { s_AND.ToString(), s_OR.ToString() };
-
-    public string Filter;
     private List<Tuple<BlockOperation, string>> m_filterblocks;
-
     private bool m_hasMacro;
+
+    public string Filter { get; set; } = string.Empty;
+    public bool ShouldSerializeFilter() => !string.IsNullOrEmpty(Filter);
 
     public TextFilter(string filter)
     {
+      FilterType = 2;
+
       Filter = filter;//.ToLower();
       m_hasMacro = HasMacro();
       BuildFilterBlock();
@@ -92,11 +91,6 @@ namespace Xceed.Wpf.DataGrid
       {
         return value.Contains(Filter.ToLower());
       }
-    }
-
-    public override void SerializeFilter()
-    {
-
     }
 
     private bool HasMacro()
@@ -180,6 +174,5 @@ namespace Xceed.Wpf.DataGrid
 
       return value.Contains(filterBlock);
     }
-
   }
 }

@@ -165,6 +165,23 @@ namespace Xceed.Wpf.DataGrid
             base.OnApplyTemplate();
         }
 
+        public override void LoadFilter()
+        {
+            FilterRow fRow = ParentRow as FilterRow;
+            if(fRow != null)
+            {
+                ListFilter filter = fRow.GetFilter(ParentColumn.FieldName) as ListFilter;
+                if(filter != null && filter.Filters.Count > 0)
+                {
+                    //Init itemsfilterschecked;
+                    foreach(FilterItem item in ItemsFilters)
+                    {
+                        item.IsChecked = filter.Filters.Contains(item.Item.ToString());
+                    }
+                }
+            }
+        }
+
         protected override void InitializeCore(DataGridContext dataGridContext, Row parentRow, ColumnBase parentColumn)
         {
             base.InitializeCore(dataGridContext, parentRow, parentColumn);
@@ -183,19 +200,7 @@ namespace Xceed.Wpf.DataGrid
                 }
 
                 //Initialize filter if already registered on filter row. 
-                FilterRow fRow = parentRow as FilterRow;
-                if(fRow != null)
-                {
-                    ListFilter filter = fRow.GetFilter(parentColumn.FieldName) as ListFilter;
-                    if(filter != null && filter.Filters.Count > 0)
-                    {
-                        //Init itemsfilterschecked;
-                        foreach(FilterItem item in ItemsFilters)
-                        {
-                            item.IsChecked = filter.Filters.Contains(item.Item.ToString());
-                        }
-                    }
-                }
+                LoadFilter();
             }
         }
 

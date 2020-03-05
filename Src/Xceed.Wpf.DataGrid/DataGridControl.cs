@@ -5202,6 +5202,40 @@ namespace Xceed.Wpf.DataGrid
       return this.DataGridContext.AreDetailsExpanded( dataItem );
     }
 
+    public void SaveCurrentFilters(string filename)
+    {
+      foreach (var item in FixedHeadersHostPanel.Children)
+      {
+        HeaderFooterItem header = item as HeaderFooterItem;
+        if (header != null)
+        {
+          FilterRow filterRow = header.Container as FilterRow;
+          if (filterRow != null)
+          {
+            filterRow.SaveFilters(filename);
+            return;
+          }
+        }
+      }
+    }
+
+    public void LoadFilterFile(string filename)
+    {
+      foreach (var item in FixedHeadersHostPanel.Children)
+      {
+        HeaderFooterItem header = item as HeaderFooterItem;
+        if (header != null)
+        {
+          FilterRow filterRow = header.Container as FilterRow;
+          if (filterRow != null)
+          {
+            filterRow.LoadFilters(filename);
+            return;
+          }
+        }
+      }
+    }
+
     public DataGridContext GetChildContext( object parentItem, string relationName )
     {
       return this.DataGridContext.GetChildContext( parentItem, relationName );
