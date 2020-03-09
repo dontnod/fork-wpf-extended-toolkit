@@ -5202,7 +5202,7 @@ namespace Xceed.Wpf.DataGrid
       return this.DataGridContext.AreDetailsExpanded( dataItem );
     }
 
-    public void SaveCurrentFilters(string filename)
+    public string SaveCurrentFilters()
     {
       foreach (var item in FixedHeadersHostPanel.Children)
       {
@@ -5212,14 +5212,31 @@ namespace Xceed.Wpf.DataGrid
           FilterRow filterRow = header.Container as FilterRow;
           if (filterRow != null)
           {
-            filterRow.SaveFilters(filename);
+            return filterRow.SaveFilters();
+          }
+        }
+      }
+      return string.Empty;
+    }
+
+    public void LoadFilter(string filter)
+    {
+      foreach (var item in FixedHeadersHostPanel.Children)
+      {
+        HeaderFooterItem header = item as HeaderFooterItem;
+        if (header != null)
+        {
+          FilterRow filterRow = header.Container as FilterRow;
+          if (filterRow != null)
+          {
+            filterRow.LoadFilters(filter);
             return;
           }
         }
       }
     }
 
-    public void LoadFilterFile(string filename)
+    public void ClearFilters()
     {
       foreach (var item in FixedHeadersHostPanel.Children)
       {
@@ -5229,7 +5246,7 @@ namespace Xceed.Wpf.DataGrid
           FilterRow filterRow = header.Container as FilterRow;
           if (filterRow != null)
           {
-            filterRow.LoadFilters(filename);
+            filterRow.ClearFilters();
             return;
           }
         }

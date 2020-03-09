@@ -167,6 +167,8 @@ namespace Xceed.Wpf.DataGrid
 
         public override void LoadFilter()
         {
+            OnClearAll();
+
             FilterRow fRow = ParentRow as FilterRow;
             if(fRow != null)
             {

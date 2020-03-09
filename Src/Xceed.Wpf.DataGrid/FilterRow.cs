@@ -87,6 +87,13 @@ namespace Xceed.Wpf.DataGrid
       return filter;
     }
 
+    public void ClearFilters()
+    {
+      m_filters.Clear();
+
+      UpdateFilters();
+    }
+
     public bool ApplyTotalFilter(object obj)
     {
       foreach (string field in m_filters.Keys)
@@ -97,25 +104,39 @@ namespace Xceed.Wpf.DataGrid
       return true;
     }
 
-    public void SaveFilters(string filename)
+    public string SaveFilters()
     {
-      if (!Directory.Exists(Path.GetDirectoryName(filename)))
+      using (var memoryStream = new MemoryStream())
       {
-        return;
+        using (var writer = new StreamWriter(memoryStream))
+        {
+          var serializer = new JsonSerializer();
+          serializer.Formatting = Formatting.Indented;
+          serializer.TypeNameHandling = TypeNameHandling.Auto;
+          serializer.TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple;
+          serializer.Serialize(writer, m_filters);
+
+          writer.Flush();
+          memoryStream.Position = 0;
+
+          var reader = new StreamReader(memoryStream);
+          return reader.ReadToEnd();
+        }
       }
 
-      using (var file = File.CreateText(filename))
-      {
-        var serializer = new JsonSerializer();
-        serializer.Formatting = Formatting.Indented;
-        serializer.TypeNameHandling = TypeNameHandling.Auto;
-        serializer.TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple;
 
-        serializer.Serialize(file, m_filters);
-      }
+      ////using (var file = File.CreateText(filename))
+      //{
+      //  //var serializer = new JsonSerializer();
+      //  //serializer.Formatting = Formatting.Indented;
+      //  //serializer.TypeNameHandling = TypeNameHandling.Auto;
+      //  //serializer.TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple;
+
+      //  string filterString = JsonConvert.SerializeObject(m_filters, Formatting.Indented);
+      //}
     }
 
-    public void LoadFilters(string filename)
+    public void LoadFilters(string filter)
     {
       try
       {
@@ -126,19 +147,9 @@ namespace Xceed.Wpf.DataGrid
         settings.ObjectCreationHandling = ObjectCreationHandling.Replace;       //not default
         settings.PreserveReferencesHandling = PreserveReferencesHandling.None;  //default
 
-        m_filters = JsonConvert.DeserializeObject<Dictionary<string, IFilter>>(File.ReadAllText(filename));
+        m_filters = JsonConvert.DeserializeObject<Dictionary<string, IFilter>>(filter);
 
-        //update filter cells
-        foreach (FilterCell cell in CreatedCells)
-        {
-          cell.LoadFilter();
-        }
-
-        FixedCellPanel fcp = CellsHostPanel as FixedCellPanel;
-        if (fcp != null)
-        {
-          fcp.DataGridContext.Items.Filter = new Predicate<object>(ApplyTotalFilter);
-        }
+        UpdateFilters();
       }
       catch (JsonReaderException e)
       {
@@ -151,6 +162,20 @@ namespace Xceed.Wpf.DataGrid
       }
     }
 
+    private void UpdateFilters()
+    {
+      //update filter cells
+      foreach (FilterCell cell in CreatedCells)
+      {
+        cell.LoadFilter();
+      }
+
+      FixedCellPanel fcp = CellsHostPanel as FixedCellPanel;
+      if (fcp != null)
+      {
+        fcp.DataGridContext.Items.Filter = new Predicate<object>(ApplyTotalFilter);
+      }
+    }
     #endregion
 
     protected override Cell CreateCell(ColumnBase column)

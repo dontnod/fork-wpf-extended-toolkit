@@ -62,6 +62,8 @@ namespace Xceed.Wpf.DataGrid
 
         public override void LoadFilter()
         {
+            FilterText = string.Empty;
+
             FilterRow fRow = ParentRow as FilterRow;
             if (fRow != null)
             {
