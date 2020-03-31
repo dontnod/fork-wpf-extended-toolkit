@@ -5238,6 +5238,9 @@ namespace Xceed.Wpf.DataGrid
 
     public void ClearFilters()
     {
+      if (FixedHeadersHostPanel == null)
+        return;
+
       foreach (var item in FixedHeadersHostPanel.Children)
       {
         HeaderFooterItem header = item as HeaderFooterItem;
