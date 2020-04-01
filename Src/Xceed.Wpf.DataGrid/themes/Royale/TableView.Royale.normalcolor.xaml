@@ -1592,7 +1592,7 @@
    <!--**************************
     * STYLE: FilterCellText
     ************************** -->
-   <Style x:Key="tableViewRoyaleNormalColorFilterCellStyle"
+   <Style x:Key="tableViewRoyaleNormalColorFilterTextCellStyle"
           TargetType="local:FilterCellText">
 
         <!-- Set the Cell's background to Transparent to make it hit-testable
