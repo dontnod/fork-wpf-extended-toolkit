@@ -11,10 +11,18 @@ using Xceed.Wpf.DataGrid.Utils.JsonSerialization;
 namespace Xceed.Wpf.DataGrid
 {
   [JsonConverter(typeof(FilterJsonConverter))]
+
+  public enum FilterTypes
+  {
+    List,
+    Text
+  }
+
   public abstract class IFilter
   {
-    public int FilterType { get; set; }
+    public FilterTypes FilterType { get; set; }
     public abstract bool ApplyFilter(object obj, string property);
+    public abstract string ToString();
   }
 
   public class ListFilter : IFilter
@@ -24,7 +32,7 @@ namespace Xceed.Wpf.DataGrid
 
     public ListFilter(List<string> filters)
     {
-      FilterType = 1;
+      FilterType = FilterTypes.List;
 
       Filters = new List<string>(filters);
     }
@@ -37,6 +45,8 @@ namespace Xceed.Wpf.DataGrid
       string value = obj.GetType().GetProperty(property).GetValue(obj, null).ToString();
       return Filters.Contains(value);
     }
+
+    public override string ToString() => Filters.FirstOrDefault();
   }
 
   public class TextFilter : IFilter
@@ -70,7 +80,7 @@ namespace Xceed.Wpf.DataGrid
 
     public TextFilter(string filter)
     {
-      FilterType = 2;
+      FilterType = FilterTypes.Text;
 
       Filter = filter;//.ToLower();
       m_hasMacro = HasMacro();
@@ -93,9 +103,11 @@ namespace Xceed.Wpf.DataGrid
       }
     }
 
+    public override string ToString() => Filter;
+
     private bool HasMacro()
     {
-      if (Filter == "")
+      if (Filter == null || Filter == string.Empty)
         return false;
       if (s_KEYWORDS.Any(Filter.Contains))
         return true;
@@ -173,6 +185,23 @@ namespace Xceed.Wpf.DataGrid
       }
 
       return value.Contains(filterBlock);
+    }
+  }
+
+  static public class FilterFactory
+  {
+    static public IFilter CreateFilter(FilterTypes filterType, string filtervalue)
+    {
+      switch(filterType)
+      {
+        case FilterTypes.List:
+          var filters = new List<string>();
+          filters.Add(filtervalue);
+          return new ListFilter(filters);
+        case FilterTypes.Text:
+        default:
+          return new TextFilter(filtervalue);
+      }
     }
   }
 }

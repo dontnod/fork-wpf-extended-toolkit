@@ -156,6 +156,8 @@ namespace Xceed.Wpf.DataGrid
 
     #endregion
 
+        private bool _isLoading = false;
+
         public ICommand ClearAll { get; set; }
 
         public ICommand CheckAll { get; set; }
@@ -167,6 +169,7 @@ namespace Xceed.Wpf.DataGrid
 
         public override void LoadFilter()
         {
+            _isLoading = true;
             OnClearAll();
 
             FilterRow fRow = ParentRow as FilterRow;
@@ -182,6 +185,7 @@ namespace Xceed.Wpf.DataGrid
                     }
                 }
             }
+            _isLoading = false;
         }
 
         protected override void InitializeCore(DataGridContext dataGridContext, Row parentRow, ColumnBase parentColumn)
@@ -245,7 +249,7 @@ namespace Xceed.Wpf.DataGrid
 
         private void FilterItemChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (!this.CanDoFilter())
+            if (!this.CanDoFilter() || _isLoading)
                 return;
 
             FilterRow fr = this.ParentRow as FilterRow;

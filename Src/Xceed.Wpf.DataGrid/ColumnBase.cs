@@ -31,12 +31,6 @@ using Xceed.Wpf.DataGrid.Views;
 
 namespace Xceed.Wpf.DataGrid
 {
-  public enum ColumnType
-  {
-    Text,
-    ComboBox
-  }
-
   [DebuggerDisplay( "FieldName = {FieldName}" )]
   public abstract class ColumnBase : Freezable, INotifyPropertyChanged, IWeakEventListener
   {
@@ -1818,6 +1812,8 @@ namespace Xceed.Wpf.DataGrid
 
       return true;
     }
+
+    public virtual FilterTypes GetFilterType() => FilterTypes.Text;
 
     #region INotifyPropertyChanged Members
 

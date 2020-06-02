@@ -50,7 +50,9 @@ namespace Xceed.Wpf.DataGrid
             }
         }
 
-        #endregion
+    #endregion
+
+        private bool _isLoading = false;
 
         public override void OnApplyTemplate()
         {
@@ -62,6 +64,7 @@ namespace Xceed.Wpf.DataGrid
 
         public override void LoadFilter()
         {
+            _isLoading = true;
             FilterText = string.Empty;
 
             FilterRow fRow = ParentRow as FilterRow;
@@ -73,6 +76,7 @@ namespace Xceed.Wpf.DataGrid
                     FilterText = filter.Filter;
                 }
             }
+            _isLoading = false;
         }
 
         protected override void InitializeCore(DataGridContext dataGridContext, Row parentRow, ColumnBase parentColumn)
@@ -122,7 +126,7 @@ namespace Xceed.Wpf.DataGrid
 
         private void FilterChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
-            if (!this.CanDoFilter())
+            if (!this.CanDoFilter() || _isLoading)
                 return;
 
             //FilterText = e.Source.ToString();

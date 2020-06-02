@@ -75,6 +75,28 @@ namespace Xceed.Wpf.DataGrid
         m_filters.Add(field, filter);
     }
 
+    public void AddColumnFilter(string header, string filtervalue, FilterTypes filterType)
+    {
+      if (filtervalue == string.Empty)
+        return;
+
+      IFilter filter = FilterFactory.CreateFilter(filterType, filtervalue);
+
+      if (m_filters.ContainsKey(header))
+        m_filters[header] = filter;
+      else
+        m_filters.Add(header, filter);
+
+      UpdateFilters();
+    }
+
+    public string GetColumnFilter(string header)
+    {
+      IFilter filter;
+      m_filters.TryGetValue(header, out filter);
+      return filter?.ToString();
+    }
+
     public void RemoveFilter(string field)
     {
       m_filters.Remove(field);

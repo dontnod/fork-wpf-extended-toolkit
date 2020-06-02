@@ -30,6 +30,8 @@ namespace Xceed.Wpf.DataGrid
             }
         }
 
-        #endregion
+    #endregion
+
+        public override FilterTypes GetFilterType() => FilterTypes.List;
     }
 }

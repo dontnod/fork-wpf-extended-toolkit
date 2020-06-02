@@ -47,6 +47,7 @@ namespace Xceed.Wpf.DataGrid
     #region Static Fields
 
     internal static readonly string SelectionModeToUsePropertyName = PropertyHelper.GetPropertyName( ( DataGridControl d ) => d.SelectionModeToUse );
+    public const string HeaderFooterContainer = "HeaderFooterContainer";
 
     #endregion
 
@@ -5202,59 +5203,67 @@ namespace Xceed.Wpf.DataGrid
       return this.DataGridContext.AreDetailsExpanded( dataItem );
     }
 
-    public string SaveCurrentFilters()
+    #region Filters
+    private FilterRow GetFilterRow()
     {
+      if (FixedHeadersHostPanel == null)
+        return null;
+
       foreach (var item in FixedHeadersHostPanel.Children)
       {
         HeaderFooterItem header = item as HeaderFooterItem;
         if (header != null)
         {
-          FilterRow filterRow = header.Container as FilterRow;
-          if (filterRow != null)
-          {
-            return filterRow.SaveFilters();
-          }
+          if (header.Container is FilterRow)
+            return header.Container as FilterRow;
         }
       }
+      return null;
+    }
+
+    public string SaveCurrentFilters()
+    {
+      var filterRow = GetFilterRow();
+      if (filterRow != null)
+        return filterRow.SaveFilters();
+
       return string.Empty;
     }
 
     public void LoadFilter(string filter)
     {
-      foreach (var item in FixedHeadersHostPanel.Children)
-      {
-        HeaderFooterItem header = item as HeaderFooterItem;
-        if (header != null)
-        {
-          FilterRow filterRow = header.Container as FilterRow;
-          if (filterRow != null)
-          {
-            filterRow.LoadFilters(filter);
-            return;
-          }
-        }
-      }
+      var filterRow = GetFilterRow();
+      if (filterRow != null)
+        filterRow.LoadFilters(filter);
     }
 
     public void ClearFilters()
     {
-      if (FixedHeadersHostPanel == null)
-        return;
-
-      foreach (var item in FixedHeadersHostPanel.Children)
-      {
-        HeaderFooterItem header = item as HeaderFooterItem;
-        if (header != null)
-        {
-          FilterRow filterRow = header.Container as FilterRow;
-          if (filterRow != null)
-          {
-            filterRow.ClearFilters();
-            return;
-          }
-        }
-      }
+      var filterRow = GetFilterRow();
+      if (filterRow != null)
+        filterRow.ClearFilters();
     }
+
+    public string GetColumnFilter(string header)
+    {
+      var filterRow = GetFilterRow();
+      if (filterRow != null)
+        return filterRow.GetColumnFilter(header);
+      return string.Empty;
+    }
+
+    public void SetColumnFilter(string header, string value)
+    {
+      var filterType = FilterTypes.Text;
+      foreach (var col in Columns)
+        if (col.FieldName == header)
+          filterType = col.GetFilterType();
+
+      var filterRow = GetFilterRow();
+      if (filterRow != null)
+        filterRow.AddColumnFilter(header, value, filterType);
+    }
+    #endregion
 
     public DataGridContext GetChildContext( object parentItem, string relationName )
     {
@@ -6612,6 +6621,8 @@ namespace Xceed.Wpf.DataGrid
           rowSelectorPane.FreeRowSelector( element );
         }
 
+        element.ContainerSet -= dataGrid.OnHeaderFooterContainerSet;
+
         dataGrid.ClearItemContainer( element, DataGridControl.GetFixedItem( element ) );
         DataGridControl.SetDataGridContext( element, null );
       }
@@ -6634,9 +6645,16 @@ namespace Xceed.Wpf.DataGrid
         DataGridControl.SetFixedItem( control, template );
         GroupLevelIndicatorPane.SetGroupLevel( control, -1 );
 
+        control.ContainerSet += dataGrid.OnHeaderFooterContainerSet;
+
         targetPanel.Children.Add( control );
       }
 
+    }
+
+    private void OnHeaderFooterContainerSet(object sender, EventArgs e)
+    {
+      OnPropertyChanged(HeaderFooterContainer);
     }
 
     private void ReapplyTemplate()

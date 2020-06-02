@@ -225,7 +225,11 @@ namespace Xceed.Wpf.DataGrid
     private void SetContainer( DependencyObject value )
     {
       this.SetValue( ContainerPropertyKey, value );
+      ContainerSet?.Invoke(this, new EventArgs());
     }
+
+    public event EventHandler ContainerSet; //added event to tell gridcontrol that headerfooter items are ready
+
 
     #endregion
 
