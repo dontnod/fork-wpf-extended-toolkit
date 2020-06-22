@@ -87,12 +87,17 @@ namespace Xceed.Wpf.DataGrid
       BuildFilterBlock();
     }
 
-    public override bool ApplyFilter(object obj, string property)
+    public override bool ApplyFilter(object obj, string propertyName)
     {
       if (Filter == "")
         return true;
 
-      string value = obj.GetType().GetProperty(property).GetValue(obj, null).ToString().ToLower();
+      var property = obj.GetType().GetProperty(propertyName);
+
+      if (property == null)
+        return false;
+
+      var value = property.GetValue(obj, null).ToString().ToLower();
       if (m_hasMacro) //contains macro
       {
         return ApplyMacro(value);
