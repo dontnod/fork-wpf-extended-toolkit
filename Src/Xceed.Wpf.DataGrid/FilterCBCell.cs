@@ -194,7 +194,7 @@ namespace Xceed.Wpf.DataGrid
 
             ColumnComboBox cbCol = parentColumn as ColumnComboBox;
 
-            if(cbCol != null)
+            if(cbCol != null && cbCol.ItemsList != null)
             {
                 this.ItemsFilters.Clear();
 
