@@ -5203,6 +5203,11 @@ namespace Xceed.Wpf.DataGrid
       return this.DataGridContext.AreDetailsExpanded( dataItem );
     }
 
+    public void LayoutChanged()
+    {
+      OnPropertyChanged("ColumnOrder");
+    }
+
     #region Filters
     private FilterRow GetFilterRow()
     {
@@ -5313,6 +5318,15 @@ namespace Xceed.Wpf.DataGrid
       return this.DataGridContext.DeferColumnsUpdate();
     }
 
+    public IList<ColumnBase> GetColumnsByPosition()
+    {
+      var cols = new List<ColumnBase>();
+
+      cols.AddRange(ColumnsByVisiblePosition);
+
+      return cols;
+    }
+
     public bool MoveColumnBefore( ColumnBase current, ColumnBase next )
     {
       return this.DataGridContext.MoveColumnBefore( current, next );
@@ -5321,6 +5335,16 @@ namespace Xceed.Wpf.DataGrid
     public bool MoveColumnAfter( ColumnBase current, ColumnBase previous )
     {
       return this.DataGridContext.MoveColumnAfter( current, previous );
+    }
+
+    public bool SwapColumns( ColumnBase col1, ColumnBase col2 )
+    {
+      var prevCol = col1.PreviousVisibleColumn;
+
+      if (!this.DataGridContext.MoveColumnAfter(col1, col2))
+        return false;
+
+      return this.DataGridContext.MoveColumnAfter(col2, prevCol);
     }
 
     public bool MoveColumnUnder( ColumnBase current, ColumnBase parent )

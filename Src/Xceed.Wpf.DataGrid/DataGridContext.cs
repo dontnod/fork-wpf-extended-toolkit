@@ -3373,6 +3373,8 @@ namespace Xceed.Wpf.DataGrid
           }
         }
 
+        m_dataGridControl.LayoutChanged();
+
         this.DefaultImageColumnDetermined = false;
       }
       else if( managerType == typeof( PreBatchCollectionChangedEventManager ) )
