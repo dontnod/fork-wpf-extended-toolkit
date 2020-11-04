@@ -5339,12 +5339,26 @@ namespace Xceed.Wpf.DataGrid
 
     public bool SwapColumns( ColumnBase col1, ColumnBase col2 )
     {
-      var prevCol = col1.PreviousVisibleColumn;
+      if (col1 == col2)
+        return true;
 
-      if (!this.DataGridContext.MoveColumnAfter(col1, col2))
+      var prevCol = col1.PreviousVisibleColumn;
+      var nextCol = col1.NextVisibleColumn;
+
+      // If col1 is already just after col2, the swap is trivial
+      if (prevCol == col2)
+        return MoveColumnAfter(col2, col1);
+
+      // Move col1 just after col2
+      if (!MoveColumnAfter(col1, col2))
         return false;
 
-      return this.DataGridContext.MoveColumnAfter(col2, prevCol);
+      // Move col2 after col1’s original predecessor, if there was one.
+      // Otherwise move col2 before col1’s original successor, unless it was col2.
+      return prevCol != null ? MoveColumnAfter(col2, prevCol)
+           : nextCol == col2 ? true // nothing to do
+           : nextCol != null ? MoveColumnBefore(col2, nextCol)
+           : false;
     }
 
     public bool MoveColumnUnder( ColumnBase current, ColumnBase parent )
