@@ -37,12 +37,43 @@ namespace Xceed.Wpf.DataGrid
       Filters = new List<string>(filters);
     }
 
-    public override bool ApplyFilter(object obj, string property)
+    public override bool ApplyFilter(object obj, string propertyName)
     {
       if (Filters.Count == 0)
         return true;
 
-      string value = obj.GetType().GetProperty(property).GetValue(obj, null).ToString();
+      string value = string.Empty;
+
+      var propertyParts = propertyName.Split(':');
+      // check is nested property
+      if (propertyParts.Length == 2)
+      {
+        var dicProperty = obj.GetType().GetProperty(propertyParts[0])?.GetValue(obj, null) as Dictionary<string, string>;
+        if (dicProperty == null)
+          return false;
+        dicProperty.TryGetValue(propertyParts[1], out value);
+        value = value?.ToLower();
+      }
+      else if (propertyParts.Length == 3)
+      {
+        var dicProperty = obj.GetType().GetProperty(propertyParts[0])?.GetValue(obj, null) as Dictionary<string, Dictionary<string, string>>;
+        if (dicProperty == null)
+          return false;
+        dicProperty.TryGetValue(propertyParts[1], out Dictionary<string, string> subDicProp);
+        subDicProp?.TryGetValue(propertyParts[2], out value);
+        value = value?.ToLower();
+      }
+      else
+      {
+        var property = obj.GetType().GetProperty(propertyName);
+        if (property == null)
+          return false;
+
+        value = property.GetValue(obj, null).ToString().ToLower();
+      }
+
+      if (value == null)
+        return false;
       return Filters.Contains(value);
     }
 
@@ -92,12 +123,39 @@ namespace Xceed.Wpf.DataGrid
       if (Filter == "")
         return true;
 
-      var property = obj.GetType().GetProperty(propertyName);
+      string value = string.Empty;
 
-      if (property == null)
+      var propertyParts = propertyName.Split(':');
+      // check is nested property
+      if (propertyParts.Length == 2)
+      {
+        var dicProperty = obj.GetType().GetProperty(propertyParts[0])?.GetValue(obj, null) as Dictionary<string, string>;
+        if (dicProperty == null)
+          return false;
+        dicProperty.TryGetValue(propertyParts[1], out value);
+        value = value?.ToLower();
+      }
+      else if (propertyParts.Length == 3)
+      {
+        var dicProperty = obj.GetType().GetProperty(propertyParts[0])?.GetValue(obj, null) as Dictionary<string, Dictionary<string, string>>;
+        if (dicProperty == null)
+          return false;
+        dicProperty.TryGetValue(propertyParts[1], out Dictionary<string, string> subDicProp);
+        subDicProp?.TryGetValue(propertyParts[2], out value);
+        value = value?.ToLower();
+      }
+      else
+      {
+        var property = obj.GetType().GetProperty(propertyName);
+        if (property == null)
+          return false;
+
+        value = property.GetValue(obj, null).ToString().ToLower();
+      }
+
+      if (value == null)
         return false;
 
-      var value = property.GetValue(obj, null).ToString().ToLower();
       if (m_hasMacro) //contains macro
       {
         return ApplyMacro(value);
