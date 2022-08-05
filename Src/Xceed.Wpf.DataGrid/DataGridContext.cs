@@ -172,17 +172,20 @@ namespace Xceed.Wpf.DataGrid
       }
     }
 
-    private void Items_CollectionChanged( object sender, NotifyCollectionChangedEventArgs e )
+    private void Items_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
-      if( m_deferSelectionChangedOnItemsCollectionChanged != null )
+      if (m_deferSelectionChangedOnItemsCollectionChanged != null)
       {
-        m_deferSelectionChangedOnItemsCollectionChanged.Queue( e );
+        m_deferSelectionChangedOnItemsCollectionChanged.Queue(e);
       }
       else
       {
-        this.UpdateSelectionAfterSourceCollectionChanged( e );
+        CollectionChanged?.Invoke(this, EventArgs.Empty);
+        this.UpdateSelectionAfterSourceCollectionChanged(e);
       }
     }
+
+    public event EventHandler CollectionChanged;
 
     private void UpdateSelectionAfterSourceCollectionChanged( NotifyCollectionChangedEventArgs e )
     {
