@@ -8,7 +8,7 @@
 	<AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.0.1" />
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="[3.6.0]" /><!-- XXX: do not downgrade this! it’s the last opensource version -->
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
   <ItemGroup>
