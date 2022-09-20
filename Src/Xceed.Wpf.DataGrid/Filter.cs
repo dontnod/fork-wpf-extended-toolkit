@@ -221,9 +221,9 @@ namespace Xceed.Wpf.DataGrid
       foreach (var block in m_filterblocks)
       {
         if (block.Item1 == BlockOperation.And)
-          result &= ApplyMacroBlock(block.Item2, value);
+          result = result && ApplyMacroBlock(block.Item2, value);
         else
-          result |= ApplyMacroBlock(block.Item2, value);
+          result = result || ApplyMacroBlock(block.Item2, value);
       }
 
       return result;
@@ -231,6 +231,9 @@ namespace Xceed.Wpf.DataGrid
 
     private bool ApplyMacroBlock(string filterBlock, string value)
     {
+      if (filterBlock == string.Empty)
+        return false;
+
       if (filterBlock == s_NULL)
         return value == "";
 
@@ -255,7 +258,7 @@ namespace Xceed.Wpf.DataGrid
   {
     static public IFilter CreateFilter(FilterTypes filterType, string filtervalue)
     {
-      switch(filterType)
+      switch (filterType)
       {
         case FilterTypes.List:
           var filters = new List<string>();
