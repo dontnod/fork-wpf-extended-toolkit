@@ -69,7 +69,7 @@ namespace Xceed.Wpf.DataGrid
         if (property == null)
           return false;
 
-        value = property.GetValue(obj, null).ToString().ToLower();
+        value = property.GetValue(obj, null).ToString();
       }
 
       if (value == null)
