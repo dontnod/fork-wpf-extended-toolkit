@@ -22,6 +22,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.Linq;
 using System.Security;
 using System.Security.Permissions;
 using System.Windows;
@@ -203,6 +204,10 @@ namespace Xceed.Wpf.DataGrid
       m_customItemContainerGenerator.ForceReset = true;
 
       base.EndInit();
+
+      var filterRow = GetFilterRow();
+      if (filterRow != null)
+        filterRow.PropertyChanged += OnFilterRowPropertyChanged;
     }
 
     private void DataGridControl_Loaded(object sender, RoutedEventArgs e)
@@ -226,10 +231,32 @@ namespace Xceed.Wpf.DataGrid
       }
 
       //hook to collection
-      DataGridContext.CollectionChanged += DataGridContext_CollectionChanged;
+      DataGridContext.CollectionChanged += OnDataGridContextCollectionChanged;
+
+      //hook to Headers. we wait for filterrow to be loaded.
+      foreach (var item in FixedHeadersHostPanel.Children.OfType<HeaderFooterItem>())
+        item.Loaded += HeaderLoaded;
+
     }
 
-    private void DataGridContext_CollectionChanged(object sender, EventArgs e)
+    private void HeaderLoaded(object sender, RoutedEventArgs e)
+    {
+      //hook to FilterRow
+      var filterRow = GetFilterRow();
+      if (filterRow != null)
+        filterRow.PropertyChanged += OnFilterRowPropertyChanged;
+      else
+        if (sender is HeaderFooterItem item)
+        item.Loaded -= HeaderLoaded;
+    }
+
+    private void OnFilterRowPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+      if (e.PropertyName == nameof(FilterRow.CurrentFilters))
+        CurrentFilters = GetFilterRow()?.CurrentFilters;
+    }
+
+    private void OnDataGridContextCollectionChanged(object sender, EventArgs e)
     {
       FilteredItems = DataGridContext.Items;
     }
@@ -1266,7 +1293,7 @@ namespace Xceed.Wpf.DataGrid
 
     #endregion
 
-    #region FilteredItems
+    #region FilteredItems Property
 
     public static readonly DependencyProperty FilteredItemsProperty = DependencyProperty.Register(
       "FilteredItems",
@@ -1282,6 +1309,44 @@ namespace Xceed.Wpf.DataGrid
       set
       {
         this.SetValue(DataGridControl.FilteredItemsProperty, value);
+      }
+    }
+
+    #endregion
+
+    #region CurrentFilters Property
+
+    public static readonly DependencyProperty CurrentFiltersProperty = DependencyProperty.Register(
+      "CurrentFilters",
+      typeof(string),
+      typeof(DataGridControl),
+      new PropertyMetadata(string.Empty, new PropertyChangedCallback(OnCurrentFiltersPropertyChanged)));
+
+    public string CurrentFilters
+    {
+      get
+      {
+        return (string)this.GetValue(DataGridControl.CurrentFiltersProperty);
+      }
+      set
+      {
+        this.SetValue(DataGridControl.CurrentFiltersProperty, value);
+      }
+    }
+
+    private static void OnCurrentFiltersPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+    {
+      if (sender is DataGridControl grid)
+      {
+        var filterRow = grid.GetFilterRow();
+        string newFilters = e.NewValue.ToString();
+        if (filterRow != null && filterRow.CurrentFilters != newFilters)
+        {
+          if (newFilters == string.Empty)
+            filterRow.ClearFilters();
+          else
+            filterRow.LoadFilters(newFilters);
+        }
       }
     }
 
@@ -5245,8 +5310,7 @@ namespace Xceed.Wpf.DataGrid
 
       foreach (var item in FixedHeadersHostPanel.Children)
       {
-        HeaderFooterItem header = item as HeaderFooterItem;
-        if (header != null)
+        if (item is HeaderFooterItem header)
         {
           if (header.Container is FilterRow)
             return header.Container as FilterRow;
@@ -5259,7 +5323,7 @@ namespace Xceed.Wpf.DataGrid
     {
       var filterRow = GetFilterRow();
       if (filterRow != null)
-        return filterRow.SaveFilters();
+        return filterRow.CurrentFilters;
 
       return string.Empty;
     }
