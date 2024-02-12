@@ -253,7 +253,7 @@ namespace Xceed.Wpf.DataGrid
     private void OnFilterRowPropertyChanged(object sender, PropertyChangedEventArgs e)
     {
       if (e.PropertyName == nameof(FilterRow.CurrentFilters))
-        CurrentFilters = GetFilterRow()?.CurrentFilters;
+        CurrentFilters = new Dictionary<string, IFilter>(GetFilterRow()?.CurrentFilters);
     }
 
     private void OnDataGridContextCollectionChanged(object sender, EventArgs e)
@@ -1318,15 +1318,15 @@ namespace Xceed.Wpf.DataGrid
 
     public static readonly DependencyProperty CurrentFiltersProperty = DependencyProperty.Register(
       "CurrentFilters",
-      typeof(string),
+      typeof(Dictionary<string, IFilter>),
       typeof(DataGridControl),
-      new PropertyMetadata(string.Empty, new PropertyChangedCallback(OnCurrentFiltersPropertyChanged)));
+      new PropertyMetadata(null, new PropertyChangedCallback(OnCurrentFiltersPropertyChanged)));
 
-    public string CurrentFilters
+    public Dictionary<string, IFilter> CurrentFilters
     {
       get
       {
-        return (string)this.GetValue(DataGridControl.CurrentFiltersProperty);
+        return (Dictionary<string, IFilter>)this.GetValue(DataGridControl.CurrentFiltersProperty);
       }
       set
       {
@@ -1339,13 +1339,10 @@ namespace Xceed.Wpf.DataGrid
       if (sender is DataGridControl grid)
       {
         var filterRow = grid.GetFilterRow();
-        string newFilters = e.NewValue.ToString();
-        if (filterRow != null && filterRow.CurrentFilters != newFilters)
+        var newFilters = e.NewValue as Dictionary<string, IFilter>;
+        if (filterRow != null && newFilters != null)
         {
-          if (newFilters == string.Empty)
-            filterRow.ClearFilters();
-          else
-            filterRow.LoadFilters(newFilters);
+          filterRow.LoadFilters(newFilters);
         }
       }
     }
@@ -5321,18 +5318,18 @@ namespace Xceed.Wpf.DataGrid
 
     public string SaveCurrentFilters()
     {
-      var filterRow = GetFilterRow();
-      if (filterRow != null)
-        return filterRow.CurrentFilters;
+      //var filterRow = GetFilterRow();
+      //if (filterRow != null)
+      //  return filterRow.CurrentFilters;
 
       return string.Empty;
     }
 
     public void LoadFilter(string filter)
     {
-      var filterRow = GetFilterRow();
-      if (filterRow != null)
-        filterRow.LoadFilters(filter);
+      //var filterRow = GetFilterRow();
+      //if (filterRow != null)
+      //  filterRow.LoadFilters(filter);
     }
 
     public void ClearFilters()

@@ -12,6 +12,7 @@ using Xceed.Wpf.DataGrid.Views;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.IO;
+using Xceed.Wpf.DataGrid.Utils.JsonSerialization;
 
 namespace Xceed.Wpf.DataGrid
 {
@@ -65,10 +66,8 @@ namespace Xceed.Wpf.DataGrid
 
     #region Filtering
 
-    private Dictionary<string, IFilter> m_filters = new Dictionary<string, IFilter>();
-
-    private string _currentFilters = string.Empty;
-    public string CurrentFilters
+    private Dictionary<string, IFilter> _currentFilters = new Dictionary<string, IFilter>();
+    public Dictionary<string, IFilter> CurrentFilters
     {
       get => _currentFilters;
       set
@@ -83,12 +82,11 @@ namespace Xceed.Wpf.DataGrid
 
     public void AddFilter(string field, IFilter filter)
     {
-      if (m_filters.ContainsKey(field))
-        m_filters[field] = filter;
+      if (CurrentFilters.ContainsKey(field))
+        CurrentFilters[field] = filter;
       else
-        m_filters.Add(field, filter);
-
-      CurrentFilters = SerializeFilters();
+        CurrentFilters.Add(field, filter);
+      OnPropertyChanged(nameof(CurrentFilters));
     }
 
     public void AddColumnFilter(string header, string filtervalue, FilterTypes filterType)
@@ -98,100 +96,60 @@ namespace Xceed.Wpf.DataGrid
 
       IFilter filter = FilterFactory.CreateFilter(filterType, filtervalue);
 
-      if (m_filters.ContainsKey(header))
-        m_filters[header] = filter;
+      if (CurrentFilters.ContainsKey(header))
+        CurrentFilters[header] = filter;
       else
-        m_filters.Add(header, filter);
+        CurrentFilters.Add(header, filter);
 
-      CurrentFilters = SerializeFilters();
+      OnPropertyChanged(nameof(CurrentFilters));
       UpdateFilterCells();
     }
 
     public string GetColumnFilter(string header)
     {
       IFilter filter;
-      m_filters.TryGetValue(header, out filter);
+      _currentFilters.TryGetValue(header, out filter);
       return filter?.ToString();
     }
 
     public void RemoveFilter(string field)
     {
-      m_filters.Remove(field);
-      CurrentFilters = SerializeFilters();
+      CurrentFilters.Remove(field);
+      OnPropertyChanged(nameof(CurrentFilters));
     }
 
     public IFilter GetFilter(string field)
     {
       IFilter filter;
-      m_filters.TryGetValue(field, out filter);
+      _currentFilters.TryGetValue(field, out filter);
       return filter;
     }
 
     public void ClearFilters()
     {
-      m_filters.Clear();
+      CurrentFilters.Clear();
+      OnPropertyChanged(nameof(CurrentFilters));
 
-      CurrentFilters = SerializeFilters();
       UpdateFilterCells();
     }
 
     public bool ApplyTotalFilter(object obj)
     {
-      foreach (string field in m_filters.Keys)
+      foreach (string field in _currentFilters.Keys)
       {
-        if (!m_filters[field].ApplyFilter(obj, field))
+        if (!_currentFilters[field].ApplyFilter(obj, field))
           return false;
       }
       return true;
     }
 
-    public string SerializeFilters()
+    public void LoadFilters(Dictionary<string, IFilter> filter)
     {
-      using (var memoryStream = new MemoryStream())
-      {
-        using (var writer = new StreamWriter(memoryStream))
-        {
-          var serializer = new JsonSerializer();
-          serializer.Formatting = Formatting.Indented;
-          serializer.TypeNameHandling = TypeNameHandling.Auto;
-          serializer.TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple;
-          serializer.Serialize(writer, m_filters);
+      if (_currentFilters.Count == filter.Count && !_currentFilters.Except(filter).Any())
+        return;
 
-          writer.Flush();
-          memoryStream.Position = 0;
-
-          var reader = new StreamReader(memoryStream);
-          return reader.ReadToEnd();
-        }
-      }
-    }
-
-    public void LoadFilters(string filter)
-    {
-      try
-      {
-        //read filter file
-        var settings = new JsonSerializerSettings();
-        settings.TypeNameHandling = TypeNameHandling.Auto;                      //default
-        settings.NullValueHandling = NullValueHandling.Include;                 //default
-        settings.ObjectCreationHandling = ObjectCreationHandling.Replace;       //not default
-        settings.PreserveReferencesHandling = PreserveReferencesHandling.None;  //default
-
-        m_filters = JsonConvert.DeserializeObject<Dictionary<string, IFilter>>(filter);
-        if (m_filters == null)
-          m_filters = new Dictionary<string, IFilter>();
-
-        UpdateFilterCells();
-      }
-      catch (JsonReaderException e)
-      {
-      }
-      catch (JsonSerializationException e)
-      {
-      }
-      catch (Exception e)
-      {
-      }
+      CurrentFilters = filter;
+      UpdateFilterCells();
     }
 
     private void UpdateFilterCells()
