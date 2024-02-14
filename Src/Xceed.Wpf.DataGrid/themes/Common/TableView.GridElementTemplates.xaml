@@ -1174,8 +1174,10 @@
 
                   <Grid>
                     <ToggleButton
-                    x:Name="CellPresenter"
-                    IsChecked="{Binding ElementName=Popup, Path=IsOpen}">
+                      x:Name="CellPresenter"
+                      ToolTip="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FilterContent}"
+                      Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FilterContent}"
+                      IsChecked="{Binding ElementName=Popup, Path=IsOpen}">
                       <ToggleButton.Style>
                         <Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
                           <Style.Triggers>
