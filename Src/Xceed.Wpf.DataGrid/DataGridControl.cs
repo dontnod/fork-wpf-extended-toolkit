@@ -208,6 +208,15 @@ namespace Xceed.Wpf.DataGrid
       var filterRow = GetFilterRow();
       if (filterRow != null)
         filterRow.PropertyChanged += OnFilterRowPropertyChanged;
+
+      // Init OrderedColumns and hook to visible columns
+      ColumnManagerLayoutChanged(null, null);
+      DataGridContext.ColumnManager.LayoutChanged += ColumnManagerLayoutChanged;
+    }
+
+    private void ColumnManagerLayoutChanged(object sender, EventArgs e)
+    {
+      OrderedColumns = new ObservableCollection<string>(VisibleColumns.Select(x => x.Title.ToString()));
     }
 
     private void DataGridControl_Loaded(object sender, RoutedEventArgs e)
@@ -488,6 +497,27 @@ namespace Xceed.Wpf.DataGrid
       get
       {
         return (ReadOnlyObservableCollection<ColumnBase>)this.GetValue(DataGridControl.VisibleColumnsProperty);
+      }
+    }
+
+    #endregion
+
+    #region OrderedColumns Property
+
+    public static readonly DependencyProperty OrderedColumnsProperty = DependencyProperty.Register(
+      "OrderedColumns",
+      typeof(IEnumerable),
+      typeof(DataGridControl));
+
+    public IEnumerable OrderedColumns
+    {
+      get
+      {
+        return (IEnumerable)this.GetValue(DataGridControl.OrderedColumnsProperty);
+      }
+      set
+      {
+        this.SetValue(DataGridControl.OrderedColumnsProperty, value);
       }
     }
 
