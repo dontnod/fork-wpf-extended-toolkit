@@ -177,6 +177,8 @@ namespace Xceed.Wpf.DataGrid
           }
         }
       }
+
+      UpdateContent();
       _isLoading = false;
     }
 
