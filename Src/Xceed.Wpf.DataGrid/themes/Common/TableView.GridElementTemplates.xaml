@@ -1313,7 +1313,7 @@
                 <StackPanel x:Name="contentPanel"
                                     Orientation="Horizontal">
 
-                  <TextBox x:Name="CellPresenter" Text="{TemplateBinding FilterText}"/>
+                  <TextBox x:Name="CellPresenter" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, Path=FilterText}"/>
 
                 </StackPanel>
               </Border>

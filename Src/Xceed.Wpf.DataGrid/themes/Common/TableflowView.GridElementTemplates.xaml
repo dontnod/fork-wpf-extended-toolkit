@@ -1521,7 +1521,7 @@
                                        Orientation="Horizontal">
 
                     <!-- Same ContentPresenter as in the base Cell Template. -->
-                    <TextBox x:Name="CellPresenter" Text="{TemplateBinding FilterText}"/>
+                    <TextBox x:Name="CellPresenter" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, Path=FilterText}"/>
 
                   </StackPanel>
                 </Border>

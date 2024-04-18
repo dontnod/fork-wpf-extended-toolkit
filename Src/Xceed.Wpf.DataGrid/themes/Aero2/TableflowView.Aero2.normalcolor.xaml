@@ -896,7 +896,7 @@
 
                 <Border Padding="{TemplateBinding Padding}">
 
-                  <TextBox x:Name="CellPresenter" Text="{TemplateBinding FilterText}" />
+                  <TextBox x:Name="CellPresenter" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, Path=FilterText}" />
 
                 </Border>
               </Grid>

@@ -1770,7 +1770,7 @@
                   <ColumnDefinition Width="*" />
                   <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="CellPresenter" Text="{TemplateBinding FilterText}"/>
+                <TextBox x:Name="CellPresenter" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, Path=FilterText}"/>
 
                 <Border x:Name="thumbToggleBackgroundBorder"
                                 Grid.Column="1"
