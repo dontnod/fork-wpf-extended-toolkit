@@ -205,13 +205,17 @@ namespace Xceed.Wpf.DataGrid
 
       base.EndInit();
 
-      var filterRow = GetFilterRow();
-      if (filterRow != null)
-        filterRow.PropertyChanged += OnFilterRowPropertyChanged;
-
       // Init OrderedColumns and hook to visible columns
       ColumnManagerLayoutChanged(null, null);
       DataGridContext.ColumnManager.LayoutChanged += ColumnManagerLayoutChanged;
+      DataGridContext.Columns.CollectionChanged += ColumnsCollectionChanged;
+    }
+
+    private void ColumnsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    {
+      if (FixedHeadersHostPanel != null)
+        foreach (var item in FixedHeadersHostPanel.Children.OfType<HeaderFooterItem>())
+          item.ContainerSet += HeaderContainerSet;
     }
 
     private void ColumnManagerLayoutChanged(object sender, EventArgs e)
@@ -241,26 +245,19 @@ namespace Xceed.Wpf.DataGrid
 
       //hook to collection
       DataGridContext.CollectionChanged += OnDataGridContextCollectionChanged;
-
-      //hook to Headers. we wait for filterrow to be loaded.
-      foreach (var item in FixedHeadersHostPanel.Children.OfType<HeaderFooterItem>())
-        item.Loaded += HeaderLoaded;
-
     }
 
-    private void HeaderLoaded(object sender, RoutedEventArgs e)
+    private void HeaderContainerSet(object sender, EventArgs e)
     {
       //hook to FilterRow
       var filterRow = GetFilterRow();
       if (filterRow != null)
         filterRow.PropertyChanged += OnFilterRowPropertyChanged;
-      else
-        if (sender is HeaderFooterItem item)
-        item.Loaded -= HeaderLoaded;
     }
 
     private void OnFilterRowPropertyChanged(object sender, PropertyChangedEventArgs e)
     {
+      //
       if (e.PropertyName == nameof(FilterRow.CurrentFilters))
         CurrentFilters = new Dictionary<string, IFilter>(GetFilterRow()?.CurrentFilters);
     }
