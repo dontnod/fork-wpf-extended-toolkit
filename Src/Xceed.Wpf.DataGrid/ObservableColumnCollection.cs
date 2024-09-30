@@ -21,6 +21,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using Xceed.Utils.Wpf;
 
 namespace Xceed.Wpf.DataGrid
@@ -159,6 +160,31 @@ namespace Xceed.Wpf.DataGrid
 
       this.OnItemRemovedCore( oldItem );
       this.OnItemAddedCore( item );
+    }
+
+    public void SilentAddRange(IEnumerable<ColumnBase> items)
+    {
+      CheckReentrancy();
+
+      int startIndex = Count;
+
+      foreach (var item in items)
+      {
+        var fieldName = item.FieldName;
+        if (string.IsNullOrEmpty(fieldName))
+          throw new ArgumentException("A column must have a fieldname.", "item");
+
+        if (m_fieldNameToColumn.ContainsKey(fieldName))
+          throw new DataGridException("A column with same field name already exists in collection.");
+
+        OnItemAddingCore( item );
+        Items.Add(item);
+        OnItemAddedCore(item);
+      }
+
+      OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new List<ColumnBase>(items), startIndex));
+      OnPropertyChanged(new PropertyChangedEventArgs("Count"));
+      OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
     }
 
     protected override void OnPropertyChanged( PropertyChangedEventArgs e )
