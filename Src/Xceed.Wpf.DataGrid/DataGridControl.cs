@@ -220,7 +220,7 @@ namespace Xceed.Wpf.DataGrid
 
     private void ColumnManagerLayoutChanged(object sender, EventArgs e)
     {
-      OrderedColumns = new ObservableCollection<string>(VisibleColumns.Select(x => x.Title.ToString()));
+      OrderedColumns = new ObservableCollection<string>(VisibleColumns.Select(x => x.FieldName.ToString()));
     }
 
     private void DataGridControl_Loaded(object sender, RoutedEventArgs e)
