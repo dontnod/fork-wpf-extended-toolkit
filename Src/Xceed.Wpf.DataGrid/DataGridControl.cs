@@ -208,14 +208,6 @@ namespace Xceed.Wpf.DataGrid
       // Init OrderedColumns and hook to visible columns
       ColumnManagerLayoutChanged(null, null);
       DataGridContext.ColumnManager.LayoutChanged += ColumnManagerLayoutChanged;
-      DataGridContext.Columns.CollectionChanged += ColumnsCollectionChanged;
-    }
-
-    private void ColumnsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-    {
-      if (FixedHeadersHostPanel != null)
-        foreach (var item in FixedHeadersHostPanel.Children.OfType<HeaderFooterItem>())
-          item.ContainerSet += HeaderContainerSet;
     }
 
     private void ColumnManagerLayoutChanged(object sender, EventArgs e)
@@ -247,19 +239,16 @@ namespace Xceed.Wpf.DataGrid
       DataGridContext.CollectionChanged += OnDataGridContextCollectionChanged;
     }
 
-    private void HeaderContainerSet(object sender, EventArgs e)
-    {
-      //hook to FilterRow
-      var filterRow = GetFilterRow();
-      if (filterRow != null)
-        filterRow.PropertyChanged += OnFilterRowPropertyChanged;
-    }
-
     private void OnFilterRowPropertyChanged(object sender, PropertyChangedEventArgs e)
     {
-      //
+      // filters were changed in the row control
       if (e.PropertyName == nameof(FilterRow.CurrentFilters))
         CurrentFilters = new Dictionary<string, IFilter>(GetFilterRow()?.CurrentFilters);
+      // the row has been refreshed so we force load filters again.
+      else if (e.PropertyName == nameof(FilterRow.IsContainerPrepared))
+      {
+        GetFilterRow()?.LoadFilters(CurrentFilters, GetFilterRow().IsContainerPrepared);
+      }
     }
 
     private void OnDataGridContextCollectionChanged(object sender, EventArgs e)
@@ -6810,6 +6799,11 @@ namespace Xceed.Wpf.DataGrid
     private void OnHeaderFooterContainerSet(object sender, EventArgs e)
     {
       OnPropertyChanged(HeaderFooterContainer);
+
+      // hook to FilterRow since its container is set
+      var filterRow = GetFilterRow();
+      if (filterRow != null)
+        filterRow.PropertyChanged += OnFilterRowPropertyChanged;
     }
 
     private void ReapplyTemplate()

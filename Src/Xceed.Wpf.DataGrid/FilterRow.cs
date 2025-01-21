@@ -143,9 +143,14 @@ namespace Xceed.Wpf.DataGrid
       return true;
     }
 
-    public void LoadFilters(Dictionary<string, IFilter> filter)
+    /// <summary>
+    /// Load text filter to filter cells
+    /// </summary>
+    public void LoadFilters(Dictionary<string, IFilter> filter, bool forceUpdate = false)
     {
-      if (_currentFilters.Count == filter.Count && !_currentFilters.Except(filter).Any())
+      if (_currentFilters.Count == filter.Count 
+        && !_currentFilters.Except(filter).Any() 
+        && !forceUpdate)
         return;
 
       CurrentFilters = filter;
