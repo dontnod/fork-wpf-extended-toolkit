@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Xceed.Wpf.DataGrid.Utils.JsonSerialization;
 
 namespace Xceed.Wpf.DataGrid
@@ -52,29 +53,25 @@ namespace Xceed.Wpf.DataGrid
         if (dicProperty == null)
           return false;
         dicProperty.TryGetValue(propertyParts[1], out value);
-        value = value?.ToLower();
       }
       else if (propertyParts.Length == 3)
       {
         var dicProperty = obj.GetType().GetProperty(propertyParts[0])?.GetValue(obj, null) as Dictionary<string, Dictionary<string, string>>;
         if (dicProperty == null)
           return false;
-        dicProperty.TryGetValue(propertyParts[1], out Dictionary<string, string> subDicProp);
+        dicProperty.TryGetValue(propertyParts[1], out var subDicProp);
         subDicProp?.TryGetValue(propertyParts[2], out value);
-        value = value?.ToLower();
       }
       else
       {
         var property = obj.GetType().GetProperty(propertyName);
-        if (property == null)
-          return false;
-
-        value = property.GetValue(obj, null).ToString();
+        value = property?.GetValue(obj, null).ToString();
       }
 
       if (value == null)
         return false;
-      return Filters.Contains(value);
+
+      return Filters.Any(x => value.Contains(x));
     }
 
     public override string ToString() => Filters.FirstOrDefault();
