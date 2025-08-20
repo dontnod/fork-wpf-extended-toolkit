@@ -4015,7 +4015,7 @@ namespace Xceed.Wpf.DataGrid
         if (copyDataObject != null)
           Clipboard.SetDataObject(copyDataObject, true);
       }
-      catch (SecurityException)
+      catch (Exception)
       {
       }
     }
