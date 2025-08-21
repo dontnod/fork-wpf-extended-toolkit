@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -64,14 +65,22 @@ namespace Xceed.Wpf.DataGrid
       }
       else
       {
-        var property = obj.GetType().GetProperty(propertyName);
-        value = property?.GetValue(obj, null)?.ToString();
+        if (obj is ICustomTypeDescriptor objDesc)
+        {
+          var property = objDesc.GetProperties().OfType<PropertyDescriptor>().FirstOrDefault(x => x.Name == propertyName);
+          value = property?.GetValue(obj)?.ToString();
+        }
+        else
+        {
+          var property = obj.GetType().GetProperty(propertyName);
+          value = property?.GetValue(obj, null)?.ToString();
+        }
       }
 
       if (value == null)
         return false;
 
-      return Filters.Any(x => value.Contains(x));
+      return Filters.Any(x => x == value);
     }
 
     public override string ToString() => Filters.FirstOrDefault();
@@ -143,11 +152,16 @@ namespace Xceed.Wpf.DataGrid
       }
       else
       {
-        var property = obj.GetType().GetProperty(propertyName);
-        if (property == null)
-          return false;
-
-        value = property.GetValue(obj, null).ToString().ToLower();
+        if (obj is ICustomTypeDescriptor objDesc)
+        {
+          var property = objDesc.GetProperties().OfType<PropertyDescriptor>().FirstOrDefault(x => x.Name == propertyName);
+          value = property?.GetValue(obj)?.ToString().ToLower();
+        }
+        else
+        {
+          var property = obj.GetType().GetProperty(propertyName);
+          value = property?.GetValue(obj, null)?.ToString().ToLower();
+        }
       }
 
       if (value == null)
