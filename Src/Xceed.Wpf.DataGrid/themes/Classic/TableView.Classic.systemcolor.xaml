@@ -1111,9 +1111,41 @@
     <Setter Property="Template"
               Value="{StaticResource tableViewFilterCellTextTemplate}" />
 
-   </Style>
+  </Style>
 
-   <!--**************************
+  <!--**************************
+    * STYLE: FilterCellBoolean
+    ************************** -->
+  <Style x:Key="tableViewClassicSystemColorFilterCellBooleanStyle"
+          TargetType="local:FilterCellBoolean">
+
+    <!-- Set the Cell's background to Transparent to make it hit-testable
+           while preserving the background drawn by the underlying Row. -->
+    <Setter Property="Background"
+              Value="Transparent" />
+
+    <Setter Property="ToolTip"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.Description}" />
+
+    <!-- In TableView, each Cell has the same width as its ParentColum's ActualWidth -->
+    <Setter Property="Width"
+              Value="{Binding RelativeSource={RelativeSource Self},Path=ParentColumn.ActualWidth}" />
+
+    <Setter Property="Padding"
+              Value="{StaticResource cellPadding}" />
+
+    <Setter Property="HorizontalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellHorizontalContentAlignment, FallbackValue=Stretch}" />
+
+    <Setter Property="VerticalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellVerticalContentAlignment, FallbackValue=Stretch}" />
+
+    <Setter Property="Template"
+              Value="{StaticResource tableViewFilterCellBooleanTemplate}" />
+
+  </Style>
+
+  <!--**************************
     * STYLE: GroupByControl 
     ************************** -->
    <Style x:Key="tableViewClassicSystemColorGroupByControlStyle"

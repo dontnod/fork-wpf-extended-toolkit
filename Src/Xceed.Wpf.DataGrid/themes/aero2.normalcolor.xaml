@@ -177,7 +177,11 @@
           TargetType="local:FilterCellText"
           BasedOn="{StaticResource tableflowViewAero2NormalColorFilterCellTextStyle}" />
 
-   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, TargetElementType=local:GroupByControl}"
+  <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, TargetElementType=local:FilterCellBoolean}"
+          TargetType="local:FilterCellBoolean"
+          BasedOn="{StaticResource tableflowViewAero2NormalColorFilterCellBooleanStyle}" />
+
+  <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, TargetElementType=local:GroupByControl}"
           TargetType="local:GroupByControl"
           BasedOn="{StaticResource tableflowViewAero2NormalColorGroupByControlStyle}" />
 

@@ -91,6 +91,10 @@
           TargetType="local:FilterCellText"
           BasedOn="{StaticResource tableViewZuneNormalColorFilterCellTextStyle}" />
 
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, TargetElementType=local:FilterCellBoolean}"
+          TargetType="local:FilterCellBoolean"
+          BasedOn="{StaticResource tableViewZuneNormalColorFilterCellBooleanStyle}" />
+
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, TargetElementType=local:FilterCBCell}"
           TargetType="local:FilterCBCell"
           BasedOn="{StaticResource tableViewZuneNormalColorFilterCBCellStyle}" />
@@ -192,6 +196,10 @@
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, TargetElementType=local:FilterCellText}"
           TargetType="local:FilterCellText"
           BasedOn="{StaticResource tableflowViewZuneNormalColorFilterCellTextStyle}" />
+
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, TargetElementType=local:FilterCellBoolean}"
+          TargetType="local:FilterCellBoolean"
+          BasedOn="{StaticResource tableflowViewZuneNormalColorFilterCellBooleanStyle}" />
 
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, TargetElementType=local:FilterCBCell}"
           TargetType="local:FilterCBCell"

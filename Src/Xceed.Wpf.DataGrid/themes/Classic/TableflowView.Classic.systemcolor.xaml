@@ -1388,6 +1388,38 @@
 
   </Style>
 
+  <!--**************************
+    * STYLE: FilterCellBoolean
+    ************************** -->
+  <Style x:Key="tableflowViewClassicSystemColorFilterCellBooleanStyle"
+          TargetType="local:FilterCellBoolean">
+
+    <!-- Set the Cell's background to Transparent to make it hit-testable
+           while preserving the background drawn by the underlying Row. -->
+    <Setter Property="Background"
+              Value="Transparent" />
+
+    <Setter Property="ToolTip"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.Description}" />
+
+    <!-- In TableflowView, each Cell has the same width as its ParentColum's ActualWidth -->
+    <Setter Property="Width"
+              Value="{Binding RelativeSource={RelativeSource Self},Path=ParentColumn.ActualWidth}" />
+
+    <Setter Property="Padding"
+              Value="{StaticResource cellPadding}" />
+
+    <Setter Property="HorizontalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellHorizontalContentAlignment, FallbackValue=Left}" />
+
+    <Setter Property="VerticalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellVerticalContentAlignment, FallbackValue=Stretch}" />
+
+    <Setter Property="Template"
+              Value="{StaticResource tableflowViewFilterCellBooleanTemplate}" />
+
+  </Style>
+
    <!--**************************
     * STYLE: GroupByControl 
     ************************** -->
@@ -1950,7 +1982,11 @@
           TargetType="local:FilterCellText"
           BasedOn="{StaticResource tableflowViewClassicSystemColorFilterCellTextStyle}" />
 
-   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, ThemeType=views:ClassicSystemColorTheme, TargetElementType=local:GroupByControl}"
+  <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, ThemeType=views:ClassicSystemColorTheme, TargetElementType=local:FilterCellBoolean}"
+          TargetType="local:FilterCellBoolean"
+          BasedOn="{StaticResource tableflowViewClassicSystemColorFilterCellBooleanStyle}" />
+
+  <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, ThemeType=views:ClassicSystemColorTheme, TargetElementType=local:GroupByControl}"
           TargetType="local:GroupByControl"
           BasedOn="{StaticResource tableflowViewClassicSystemColorGroupByControlStyle}" />
 

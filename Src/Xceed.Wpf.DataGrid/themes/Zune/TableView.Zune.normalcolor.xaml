@@ -1441,6 +1441,38 @@
    </Style>
 
    <!--**************************
+    * STYLE: FilterCellText 
+    ************************** -->
+  <Style x:Key="tableViewZuneNormalColorFilterCellBooleanStyle"
+          TargetType="local:FilterCellBoolean">
+
+        <!-- Set the Cell's background to Transparent to make it hit-testable
+           while preserving the background drawn by the underlying Row. -->
+        <Setter Property="Background"
+              Value="Transparent" />
+
+        <Setter Property="ToolTip"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.Description}" />
+
+        <!-- In TableView, each Cell has the same width as its ParentColum's ActualWidth -->
+        <Setter Property="Width"
+              Value="{Binding RelativeSource={RelativeSource Self},Path=ParentColumn.ActualWidth}" />
+
+        <Setter Property="Padding"
+              Value="{StaticResource columnManagerCellPadding}" />
+
+        <Setter Property="HorizontalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellHorizontalContentAlignment, FallbackValue=Stretch}" />
+
+        <Setter Property="VerticalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellVerticalContentAlignment, FallbackValue=Stretch}" />
+
+        <Setter Property="Template"
+              Value="{StaticResource tableViewFilterCellBooleanTemplate}" />
+
+   </Style>
+
+   <!--**************************
     * STYLE: FilterCBCell 
     ************************** -->
    <Style x:Key="tableViewZuneNormalColorFilterCBCellStyle"
@@ -1968,6 +2000,10 @@
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, ThemeType=views:ZuneNormalColorTheme, TargetElementType=local:FilterCellText}"
           TargetType="local:FilterCellText"
           BasedOn="{StaticResource tableViewZuneNormalColorFilterCellTextStyle}" />
+
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, ThemeType=views:ZuneNormalColorTheme, TargetElementType=local:FilterCellBoolean}"
+          TargetType="local:FilterCellBoolean"
+          BasedOn="{StaticResource tableViewZuneNormalColorFilterCellBooleanStyle}" />
 
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, ThemeType=views:ZuneNormalColorTheme, TargetElementType=local:FilterCBCell}"
           TargetType="local:FilterCBCell"

@@ -1344,6 +1344,109 @@
   </ControlTemplate>
 
   <!--**************************
+    * TEMPLATE: FilterCellBoolean
+    ************************** -->
+  <ControlTemplate x:Key="tableViewFilterCellBooleanTemplate"
+                    TargetType="local:FilterCellBoolean">
+
+    <!-- We don't use the base Cell Template for the ColumnManagerCell because it need more elements
+           to function properly: a Thumb named "PART_ColumnResizerThumb" that is used to resize the
+           ColumnManagerCells's ParentColumn.Width and a glyph that represents the Column's SortDirection. -->
+
+    <Border  BorderBrush="{TemplateBinding BorderBrush}"
+               BorderThickness="{TemplateBinding BorderThickness}">
+
+      <!-- This Grid is used to position the resizer Thumb over the ColumnManagerCell -->
+      <Grid>
+
+        <Rectangle Fill="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Stretch"
+                       Width="1"
+                       Margin="0,2,0,2" />
+
+        <Rectangle Fill="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Stretch"
+                       Width="1"
+                       Margin="0,2,0,2" />
+
+        <DockPanel>
+          <Border x:Name="thumbToggleBackgroundBorder"
+                       DockPanel.Dock="Right">
+
+            <Grid>
+
+              <Border x:Name="toggleDelimeterBorder"
+                             BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+                             BorderThickness="1,0,0,0"
+                             Margin="0,4,0,4"
+                             Background="Transparent"
+                             Visibility="Collapsed">
+
+                <Border x:Name="toggleDelimeterBorder2"
+                                BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
+                                BorderThickness="1,0,0,0"
+                                Margin="0,0,0,0"
+                                Background="Transparent"
+                                Visibility="Collapsed">
+
+                </Border>
+
+              </Border>
+
+              <ToggleButton x:Name="toggleButton"
+                                   Focusable="False"
+                                   VerticalAlignment="Stretch"
+                                   Visibility="Collapsed"
+                                   Margin="2,0,0,0"
+                                   Opacity="0.5" />
+            </Grid>
+
+          </Border>
+
+          <Border Background="{TemplateBinding Background}">
+
+            <!-- This Grid is used to layout the delimiter lines on top of the ContentPresenter -->
+            <Grid>
+
+              <Border Padding="{TemplateBinding Padding}">
+
+                <!-- This StackPanel is used to layout the ContentPresenter and the Sort Glyph (when present). -->
+                <StackPanel x:Name="contentPanel"
+                                    Orientation="Horizontal">
+
+                  <CheckBox x:Name="CellPresenter" IsThreeState="True" IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, Path=FilterValue}"/>
+
+                </StackPanel>
+              </Border>
+
+            </Grid>
+
+          </Border>
+
+        </DockPanel>
+
+      </Grid>
+
+    </Border>
+
+    <ControlTemplate.Triggers>
+
+      <Trigger Property="IsPressed"
+                  Value="True">
+
+        <Setter TargetName="contentPanel"
+                    Property="Margin"
+                    Value="1,1,-1,-1" />
+
+      </Trigger>
+
+    </ControlTemplate.Triggers>
+
+  </ControlTemplate>
+
+  <!--**************************
     * TEMPLATE: GroupByControl
     ************************** -->
   <ControlTemplate x:Key="tableViewGroupByControlTemplate"

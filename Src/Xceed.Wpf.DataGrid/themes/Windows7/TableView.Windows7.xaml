@@ -1025,6 +1025,177 @@
   </ControlTemplate>
 
   <!--**************************
+    * TEMPLATE: FilterCellBoolean 
+    ************************** -->
+  <ControlTemplate x:Key="tableViewWindows7FilterCellBooleanTemplate"
+                    TargetType="local:FilterCellBoolean">
+
+    <!-- We don't use the base Cell Template for the ColumnManagerCell because it need more elements
+           to function properly: a Thumb named "PART_ColumnResizerThumb" that is used to resize the
+           ColumnManagerCells's ParentColumn.Width and a glyph that represents the Column's SortDirection. -->
+    <Grid x:Name="Grid"
+            Background="Transparent">
+
+      <Grid x:Name="ColumnResizerDecorator">
+        <Path Stretch="Fill"
+                  HorizontalAlignment="Right"
+                  Height="28"
+                  Width="20"
+                  Fill="{StaticResource columnManagerCellResizerDecoratorBrush}"
+                  Data="M0,28 z L18,28 C19,27 19,27 20,26 L20,2 L18.5,14 C17,25 17,25 0,28 Z" />
+
+        <Grid Height="12"
+                  Width="3"
+                  HorizontalAlignment="Right"
+                  Margin="0,0,3,0">
+          <Grid.Resources>
+            <DataTemplate x:Key="ResizerDot">
+              <Grid>
+                <Border Width="2"
+                                Height="2"
+                                BorderBrush="#55000000"
+                                BorderThickness="1"
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Left" />
+                <Border Width="1"
+                                Height="1"
+                                BorderBrush="#55FFFFFF"
+                                BorderThickness="1"
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Left" />
+              </Grid>
+            </DataTemplate>
+          </Grid.Resources>
+
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+          </Grid.RowDefinitions>
+
+          <ContentPresenter ContentTemplate="{StaticResource ResizerDot}"
+                                 Grid.Row="0"
+                                 Margin="1,1,0,1" />
+          <ContentPresenter ContentTemplate="{StaticResource ResizerDot}"
+                                 Grid.Row="1"
+                                 Margin="1,1,0,1" />
+          <ContentPresenter ContentTemplate="{StaticResource ResizerDot}"
+                                 Grid.Row="2"
+                                 Margin="1,1,0,1" />
+        </Grid>
+      </Grid>
+
+      <Border x:Name="PressEffect"
+                 Opacity="0"
+                 CornerRadius="5"
+                 Background="{StaticResource columnManagerCellRoundedEffectBrush}" />
+
+      <Border x:Name="BlackLine"
+                 BorderThickness="1,0"
+                 Opacity="0"
+                 CornerRadius="5"
+                 BorderBrush="{StaticResource columnManagerCellBlackLineBrush}">
+        <Border x:Name="WhiteLine"
+                    BorderThickness="1,0"
+                    Opacity="0"
+                    CornerRadius="4"
+                    BorderBrush="{StaticResource columnManagerCellWhiteLineBrush}" />
+      </Border>
+
+      <Grid>
+        <Border x:Name="mainBorder"
+                    Background="Transparent"
+                    Padding="{TemplateBinding Padding}">
+
+          <DockPanel Margin="0,0,4,0">
+
+            <Grid x:Name="toggleGrid"
+                        DockPanel.Dock="Right"
+                        Visibility="Collapsed"
+                        Margin="0,5,4,0">
+
+              <ToggleButton x:Name="toggleButton"
+                                   Focusable="False"
+                                   VerticalAlignment="Stretch"
+                                   Margin="2,0,0,0"
+                                   Opacity="0.5" />
+            </Grid>
+
+            <Grid HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+
+              <CheckBox x:Name="CellPresenter" IsThreeState="True" IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, Path=FilterValue}"/>
+
+            </Grid>
+          </DockPanel>
+        </Border>
+
+      </Grid>
+    </Grid>
+
+    <ControlTemplate.Triggers>
+
+      <!-- Trigger to set the background and pressed effect depending on state -->
+      <Trigger Property="IsMouseOver"
+                  Value="true">
+        <Trigger.EnterActions>
+          <BeginStoryboard>
+            <Storyboard>
+              <DoubleAnimation BeginTime="00:00:00"
+                                      Duration="00:00:00.2"
+                                      Storyboard.TargetName="PressEffect"
+                                      Storyboard.TargetProperty="Opacity"
+                                      To="1" />
+            </Storyboard>
+          </BeginStoryboard>
+        </Trigger.EnterActions>
+        <Trigger.ExitActions>
+          <BeginStoryboard>
+            <Storyboard>
+              <DoubleAnimation BeginTime="00:00:00"
+                                      Duration="00:00:00.5"
+                                      Storyboard.TargetName="PressEffect"
+                                      Storyboard.TargetProperty="Opacity"
+                                      To="0" />
+            </Storyboard>
+          </BeginStoryboard>
+        </Trigger.ExitActions>
+      </Trigger>
+
+      <Trigger Property="IsPressed"
+                  Value="true">
+        <Trigger.EnterActions>
+          <BeginStoryboard>
+            <Storyboard>
+              <DoubleAnimation BeginTime="00:00:00"
+                                      Duration="00:00:00.02"
+                                      Storyboard.TargetName="PressEffect"
+                                      Storyboard.TargetProperty="Background.(RadialGradientBrush.RadiusY)"
+                                      To="1.44" />
+            </Storyboard>
+          </BeginStoryboard>
+        </Trigger.EnterActions>
+        <Trigger.ExitActions>
+          <BeginStoryboard>
+            <Storyboard>
+              <DoubleAnimation BeginTime="00:00:00"
+                                      Duration="00:00:00.7"
+                                      Storyboard.TargetName="PressEffect"
+                                      Storyboard.TargetProperty="Background.(RadialGradientBrush.RadiusY)"
+                                      To="0.66" />
+            </Storyboard>
+          </BeginStoryboard>
+        </Trigger.ExitActions>
+      </Trigger>
+
+    </ControlTemplate.Triggers>
+
+  </ControlTemplate>
+
+  <!--**************************
     * TEMPLATE: FilterCBCell 
     ************************** -->
   <ControlTemplate x:Key="tableViewWindows7FilterCBCellTemplate"
@@ -3119,6 +3290,41 @@
   </Style>
 
   <!--**************************
+    * STYLE: FilterCellBoolean
+    ************************** -->
+  <Style x:Key="tableViewWindows7FilterCellBooleanStyle"
+          TargetType="local:FilterCellBoolean">
+
+    <!-- Set the Cell's background to Transparent to make it hit-testable
+           while preserving the background drawn by the underlying Row. -->
+    <Setter Property="Background"
+              Value="Transparent" />
+
+    <Setter Property="ToolTip"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.Description}" />
+
+    <Setter Property="TextElement.Foreground"
+              Value="White" />
+
+    <!-- In TableView, each Cell has the same width as its ParentColum's ActualWidth -->
+    <Setter Property="Width"
+              Value="{Binding RelativeSource={RelativeSource Self},Path=ParentColumn.ActualWidth}" />
+
+    <Setter Property="Padding"
+              Value="4,3,0,7" />
+
+    <Setter Property="HorizontalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellHorizontalContentAlignment, FallbackValue=Stretch}" />
+
+    <Setter Property="VerticalContentAlignment"
+              Value="{Binding RelativeSource={RelativeSource Self}, Path=ParentColumn.CellVerticalContentAlignment, FallbackValue=Stretch}" />
+
+    <Setter Property="Template"
+              Value="{StaticResource tableViewWindows7FilterCellBooleanTemplate}" />
+
+  </Style>
+
+  <!--**************************
     * STYLE: FilterCBCell 
     ************************** -->
   <Style x:Key="tableViewWindows7FilterCBCellStyle"
@@ -3640,6 +3846,10 @@
   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, ThemeType=views:Windows7Theme, TargetElementType=local:FilterCellText}"
           TargetType="local:FilterCellText"
           BasedOn="{StaticResource tableViewWindows7FilterCellTextStyle}" />
+
+  <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, ThemeType=views:Windows7Theme, TargetElementType=local:FilterCellBoolean}"
+          TargetType="local:FilterCellBoolean"
+          BasedOn="{StaticResource tableViewWindows7FilterCellBooleanStyle}" />
 
   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, ThemeType=views:Windows7Theme, TargetElementType=local:FilterCBCell}"
           TargetType="local:FilterCBCell"

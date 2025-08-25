@@ -91,6 +91,10 @@
           TargetType="local:FilterCellText"
           BasedOn="{StaticResource tableViewLunaMetallicFilterCellTextStyle}" />
 
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, TargetElementType=local:FilterCellBoolean}"
+          TargetType="local:FilterCellBoolean"
+          BasedOn="{StaticResource tableViewLunaMetallicFilterCellBooleanStyle}" />
+
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, TargetElementType=local:FilterCBCell}"
           TargetType="local:FilterCBCell"
           BasedOn="{StaticResource tableViewLunaMetallicFilterCBCellStyle}" />
@@ -192,6 +196,10 @@
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, TargetElementType=local:FilterCellText}"
           TargetType="local:FilterCellText"
           BasedOn="{StaticResource tableflowViewLunaMetallicFilterCellTextStyle}" />
+
+   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, TargetElementType=local:FilterCellBoolean}"
+          TargetType="local:FilterCellBoolean"
+          BasedOn="{StaticResource tableflowViewLunaMetallicFilterCellBooleanStyle}" />
 
    <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, TargetElementType=local:FilterCBCell}"
           TargetType="local:FilterCBCell"

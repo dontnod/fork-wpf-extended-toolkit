@@ -95,7 +95,11 @@
           TargetType="local:FilterCellText"
           BasedOn="{StaticResource tableViewAeroNormalColorFilterCellTextStyle}"/>
 
-   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, TargetElementType=local:GroupByControl}"
+  <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, TargetElementType=local:FilterCellBoolean}"
+          TargetType="local:FilterCellBoolean"
+          BasedOn="{StaticResource tableViewAeroNormalColorFilterCellBooleanStyle}"/>
+
+  <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, TargetElementType=local:GroupByControl}"
           TargetType="local:GroupByControl"
           BasedOn="{StaticResource tableViewAeroNormalColorGroupByControlStyle}"/>
 

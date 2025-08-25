@@ -146,7 +146,11 @@
           TargetType="local:FilterCellText"
           BasedOn="{StaticResource tableViewLunaNormalColorFilterCellTextStyle}" />
 
-   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, TargetElementType=local:GroupByControl}"
+  <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, TargetElementType=local:FilterCellBoolean}"
+          TargetType="local:FilterCellBoolean"
+          BasedOn="{StaticResource tableViewLunaNormalColorFilterCellBooleanStyle}" />
+
+  <Style x:Key="{markup:ThemeKey TargetViewType=views:TableView, TargetElementType=local:GroupByControl}"
           TargetType="local:GroupByControl"
           BasedOn="{StaticResource tableViewLunaNormalColorGroupByControlStyle}" />
 
@@ -248,7 +252,11 @@
           TargetType="local:FilterCellText"
           BasedOn="{StaticResource tableflowViewLunaNormalColorFilterCellTextStyle}" />
 
-   <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, TargetElementType=local:GroupByControl}"
+  <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, TargetElementType=local:FilterCellBoolean}"
+          TargetType="local:FilterCellBoolean"
+          BasedOn="{StaticResource tableflowViewLunaNormalColorFilterCellBooleanStyle}" />
+
+  <Style x:Key="{markup:ThemeKey TargetViewType=views:TableflowView, TargetElementType=local:GroupByControl}"
           TargetType="local:GroupByControl"
           BasedOn="{StaticResource tableflowViewLunaNormalColorGroupByControlStyle}" />
 

@@ -32,6 +32,6 @@ namespace Xceed.Wpf.DataGrid
 
     #endregion
 
-        public override FilterTypes GetFilterType() => FilterTypes.List;
+        public override FilterType GetFilterType() => FilterType.List;
     }
 }

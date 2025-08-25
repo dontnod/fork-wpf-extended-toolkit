@@ -5365,7 +5365,7 @@ namespace Xceed.Wpf.DataGrid
 
     public void SetColumnFilter(string header, string value)
     {
-      var filterType = FilterTypes.Text;
+      var filterType = FilterType.Text;
       foreach (var col in Columns)
         if (col.FieldName == header)
           filterType = col.GetFilterType();

@@ -75,31 +75,24 @@ namespace Xceed.Wpf.DataGrid
         if (value != _currentFilters)
         {
           _currentFilters = value;
-          this.OnPropertyChanged(nameof(CurrentFilters));
+          OnPropertyChanged(nameof(CurrentFilters));
         }
       }
     }
 
     public void AddFilter(string field, IFilter filter)
     {
-      if (CurrentFilters.ContainsKey(field))
-        CurrentFilters[field] = filter;
-      else
-        CurrentFilters.Add(field, filter);
+      CurrentFilters[field] = filter;
       OnPropertyChanged(nameof(CurrentFilters));
     }
 
-    public void AddColumnFilter(string header, string filtervalue, FilterTypes filterType)
+    public void AddColumnFilter(string header, object filterValue, FilterType filterType)
     {
-      if (filtervalue == string.Empty)
+      if (filterValue is string stringFilter && stringFilter == "")
         return;
 
-      IFilter filter = FilterFactory.CreateFilter(filterType, filtervalue);
-
-      if (CurrentFilters.ContainsKey(header))
-        CurrentFilters[header] = filter;
-      else
-        CurrentFilters.Add(header, filter);
+      var filter = FilterFactory.CreateFilter(filterType, filterValue);
+      CurrentFilters[header] = filter;
 
       OnPropertyChanged(nameof(CurrentFilters));
       UpdateFilterCells();
@@ -129,17 +122,15 @@ namespace Xceed.Wpf.DataGrid
     {
       CurrentFilters.Clear();
       OnPropertyChanged(nameof(CurrentFilters));
-
       UpdateFilterCells();
     }
 
     public bool ApplyTotalFilter(object obj)
     {
       foreach (string field in _currentFilters.Keys)
-      {
         if (!_currentFilters[field].ApplyFilter(obj, field))
           return false;
-      }
+
       return true;
     }
 
@@ -161,24 +152,22 @@ namespace Xceed.Wpf.DataGrid
     {
       //update filter cells
       foreach (FilterCell cell in CreatedCells)
-      {
         cell.LoadFilter();
-      }
 
       FixedCellPanel fcp = CellsHostPanel as FixedCellPanel;
+
       if (fcp != null)
-      {
         fcp.DataGridContext.Items.Filter = new Predicate<object>(ApplyTotalFilter);
-      }
     }
     #endregion
 
     protected override Cell CreateCell(ColumnBase column)
     {
-      if (column as ColumnComboBox != null)
-      {
+      if (column is ColumnComboBox)
         return new FilterCBCell();
-      }
+
+      if (column is ColumnBoolean)
+        return new FilterCellBoolean();
 
       return new FilterCellText();
     }

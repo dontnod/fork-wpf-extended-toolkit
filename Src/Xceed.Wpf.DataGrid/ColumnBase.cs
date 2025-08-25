@@ -1813,7 +1813,7 @@ namespace Xceed.Wpf.DataGrid
       return true;
     }
 
-    public virtual FilterTypes GetFilterType() => FilterTypes.Text;
+    public virtual FilterType GetFilterType() => FilterType.Text;
 
     #region INotifyPropertyChanged Members
 

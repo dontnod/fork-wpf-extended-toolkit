@@ -14,15 +14,16 @@ namespace Xceed.Wpf.DataGrid
 {
   [JsonConverter(typeof(FilterJsonConverter))]
 
-  public enum FilterTypes
+  public enum FilterType
   {
     List,
-    Text
+    Text,
+    Boolean
   }
 
   public abstract class IFilter
   {
-    public FilterTypes FilterType { get; set; }
+    public FilterType FilterType { get; set; }
     public abstract bool ApplyFilter(object obj, string property);
     public abstract string ToString();
   }
@@ -34,8 +35,7 @@ namespace Xceed.Wpf.DataGrid
 
     public ListFilter(List<string> filters)
     {
-      FilterType = FilterTypes.List;
-
+      FilterType = FilterType.List;
       Filters = new List<string>(filters);
     }
 
@@ -86,6 +86,64 @@ namespace Xceed.Wpf.DataGrid
     public override string ToString() => Filters.FirstOrDefault();
   }
 
+  public class BooleanFilter : IFilter
+  {
+    public bool? Filter { get; set; } = null;
+    public bool ShouldSerializeFilter() => Filter != null;
+
+    public BooleanFilter(bool? filterValue)
+    {
+      FilterType = FilterType.Boolean;
+      Filter = filterValue;
+    }
+
+    public override bool ApplyFilter(object obj, string propertyName)
+    {
+      if (Filter == null)
+        return true;
+
+      string value = string.Empty;
+
+      var propertyParts = propertyName.Split(':');
+      // check is nested property
+      if (propertyParts.Length == 2)
+      {
+        var dicProperty = obj.GetType().GetProperty(propertyParts[0])?.GetValue(obj, null) as Dictionary<string, string>;
+        if (dicProperty == null)
+          return false;
+        dicProperty.TryGetValue(propertyParts[1], out value);
+      }
+      else if (propertyParts.Length == 3)
+      {
+        var dicProperty = obj.GetType().GetProperty(propertyParts[0])?.GetValue(obj, null) as Dictionary<string, Dictionary<string, string>>;
+        if (dicProperty == null)
+          return false;
+        dicProperty.TryGetValue(propertyParts[1], out var subDicProp);
+        subDicProp?.TryGetValue(propertyParts[2], out value);
+      }
+      else
+      {
+        if (obj is ICustomTypeDescriptor objDesc)
+        {
+          var property = objDesc.GetProperties().OfType<PropertyDescriptor>().FirstOrDefault(x => x.Name == propertyName);
+          value = property?.GetValue(obj)?.ToString();
+        }
+        else
+        {
+          var property = obj.GetType().GetProperty(propertyName);
+          value = property?.GetValue(obj, null)?.ToString();
+        }
+      }
+
+      if (value == null) return false;
+      if (value == "") return true;
+
+      return value.ToString() == Filter.ToString();
+    }
+
+    public override string ToString() => Filter?.ToString() ?? "";
+  }
+
   public class TextFilter : IFilter
   {
     public enum BlockOperation
@@ -117,7 +175,7 @@ namespace Xceed.Wpf.DataGrid
 
     public TextFilter(string filter)
     {
-      FilterType = FilterTypes.Text;
+      FilterType = FilterType.Text;
 
       Filter = filter;//.ToLower();
       m_hasMacro = HasMacro();
@@ -267,17 +325,20 @@ namespace Xceed.Wpf.DataGrid
 
   static public class FilterFactory
   {
-    static public IFilter CreateFilter(FilterTypes filterType, string filtervalue)
+    static public IFilter CreateFilter(FilterType filterType, object filterValue)
     {
       switch (filterType)
       {
-        case FilterTypes.List:
-          var filters = new List<string>();
-          filters.Add(filtervalue);
+        case FilterType.List:
+          var filters = new List<string>() { (string)filterValue };
           return new ListFilter(filters);
-        case FilterTypes.Text:
+
+        case FilterType.Boolean:
+          return new BooleanFilter((bool?)filterValue);
+
+        case FilterType.Text:
         default:
-          return new TextFilter(filtervalue);
+          return new TextFilter((string)filterValue);
       }
     }
   }

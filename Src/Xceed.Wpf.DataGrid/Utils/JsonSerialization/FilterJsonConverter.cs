@@ -36,6 +36,8 @@ namespace Xceed.Wpf.DataGrid.Utils.JsonSerialization
           return JsonConvert.DeserializeObject<ListFilter>(jo.ToString(), SpecifiedSubclassConversion);
         case 2:
           return JsonConvert.DeserializeObject<TextFilter>(jo.ToString(), SpecifiedSubclassConversion);
+        case 3:
+          return JsonConvert.DeserializeObject<BooleanFilter>(jo.ToString(), SpecifiedSubclassConversion);
         default:
           return new Exception();
       }

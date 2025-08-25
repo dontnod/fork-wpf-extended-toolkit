@@ -40,14 +40,8 @@ namespace Xceed.Wpf.DataGrid
 
         public string FilterText
         {
-            get
-            {
-                return (string)this.GetValue(FilterCellText.FilterTextProperty);
-            }
-            set
-            {
-                this.SetValue(FilterCellText.FilterTextProperty, value);
-            }
+          get => (string)GetValue(FilterCellText.FilterTextProperty);
+          set => SetValue(FilterCellText.FilterTextProperty, value);
         }
 
     #endregion
@@ -66,16 +60,15 @@ namespace Xceed.Wpf.DataGrid
         {
             _isLoading = true;
             FilterText = string.Empty;
+            var fRow = ParentRow as FilterRow;
 
-            FilterRow fRow = ParentRow as FilterRow;
             if (fRow != null)
             {
-                TextFilter filter = fRow.GetFilter(ParentColumn.FieldName) as TextFilter;
+                var filter = fRow.GetFilter(ParentColumn.FieldName) as TextFilter;
                 if (filter != null )
-                {
                     FilterText = filter.Filter;
-                }
             }
+
             _isLoading = false;
         }
 
