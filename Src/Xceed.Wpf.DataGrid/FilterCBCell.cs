@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
 using Xceed.Wpf.DataGrid;
 using Xceed.Wpf.DataGrid.Views;
 
 namespace Xceed.Wpf.DataGrid
 {
+  /// <summary>
+  /// VM class for Checkable filter Items
+  /// </summary>
   public class FilterItem : INotifyPropertyChanged
   {
     public FilterItem(object item, bool isChecked)
@@ -46,6 +47,9 @@ namespace Xceed.Wpf.DataGrid
     public void OnPropertyChanged(string property) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
   }
 
+  /// <summary>
+  /// Control class for Combobox Filter Cells
+  /// </summary>
   public class FilterCBCell : FilterCell, IEditableObject
   {
     static FilterCBCell()
@@ -54,29 +58,31 @@ namespace Xceed.Wpf.DataGrid
 
     public FilterCBCell()
     {
-      this.ReadOnly = true;
-      this.ItemsFilters = new ObservableCollection<FilterItem>();
-      this.ClearAll = new ActionCommand((o) => OnClearAll());
-      this.CheckAll = new ActionCommand((o) => OnCheckAll());
+      ReadOnly = true;
+      ItemsFilters = new List<FilterItem>();
+      ClearAll = new ActionCommand((o) => OnClearAll());
+      CheckAll = new ActionCommand((o) => OnCheckAll());
     }
+
+    #region Bindable Properties
 
     #region ItemSource Property
 
     public static readonly DependencyProperty ItemsFiltersProperty = DependencyProperty.Register(
       "ItemsFilters",
-      typeof(ObservableCollection<FilterItem>),
+      typeof(List<FilterItem>),
       typeof(FilterCBCell),
       new UIPropertyMetadata(null));
 
-    public ObservableCollection<FilterItem> ItemsFilters
+    public List<FilterItem> ItemsFilters
     {
       get
       {
-        return (ObservableCollection<FilterItem>)this.GetValue(FilterCBCell.ItemsFiltersProperty);
+        return (List<FilterItem>)GetValue(FilterCBCell.ItemsFiltersProperty);
       }
       set
       {
-        this.SetValue(FilterCBCell.ItemsFiltersProperty, value);
+        SetValue(FilterCBCell.ItemsFiltersProperty, value);
       }
     }
 
@@ -96,6 +102,9 @@ namespace Xceed.Wpf.DataGrid
 
     #region FilterContent Property
 
+    /// <summary>
+    /// Property used for serializing Filters
+    /// </summary>
     public static readonly DependencyProperty FilterContentProperty = DependencyProperty.Register(
       "FilterContent",
       typeof(string),
@@ -106,13 +115,15 @@ namespace Xceed.Wpf.DataGrid
     {
       get
       {
-        return (string)this.GetValue(FilterCBCell.FilterContentProperty);
+        return (string)GetValue(FilterCBCell.FilterContentProperty);
       }
       set
       {
-        this.SetValue(FilterCBCell.FilterContentProperty, value);
+        SetValue(FilterCBCell.FilterContentProperty, value);
       }
     }
+
+    #endregion
 
     #endregion
 
@@ -122,13 +133,11 @@ namespace Xceed.Wpf.DataGrid
     {
       get
       {
-
         var parentColumn = this.ParentColumn;
         if (parentColumn == null)
           return true;
 
         return !TableflowView.GetIsBeingDraggedAnimated(parentColumn);
-
       }
     }
 
@@ -140,6 +149,9 @@ namespace Xceed.Wpf.DataGrid
 
     public ICommand CheckAll { get; set; }
 
+    /// <summary>
+    /// Update FilterContent property
+    /// </summary>
     private void UpdateContent()
     {
       var checkedItems = ItemsFilters.Where(x => x.IsChecked);
@@ -159,6 +171,9 @@ namespace Xceed.Wpf.DataGrid
       base.OnApplyTemplate();
     }
 
+    /// <summary>
+    /// Update Filter Items UI
+    /// </summary>
     public override void LoadFilter()
     {
       _isLoading = true;
@@ -182,6 +197,9 @@ namespace Xceed.Wpf.DataGrid
       _isLoading = false;
     }
 
+    /// <summary>
+    /// Initialize Filters
+    /// </summary>
     protected override void InitializeCore(DataGridContext dataGridContext, Row parentRow, ColumnBase parentColumn)
     {
       base.InitializeCore(dataGridContext, parentRow, parentColumn);
@@ -190,14 +208,21 @@ namespace Xceed.Wpf.DataGrid
 
       if (cbCol != null && cbCol.ItemsList != null)
       {
-        this.ItemsFilters.Clear();
+        var filters = new List<FilterItem>();
+
+        // Add no value option
+        filters.Add(new FilterItem(ListFilter.NO_VALUE_FILTER, false));
 
         foreach (var item in cbCol.ItemsList)
         {
           FilterItem fi = new FilterItem(item, false);
-          fi.PropertyChanged += FilterItemChanged;
-          this.ItemsFilters.Add(fi);
+          filters.Add(fi);
         }
+
+        filters.ForEach(x => x.PropertyChanged += FilterItemChanged);
+
+        ItemsFilters.ForEach(x => x.PropertyChanged -= FilterItemChanged);
+        ItemsFilters = filters;
 
         //Initialize filter if already registered on filter row. 
         LoadFilter();
@@ -234,20 +259,23 @@ namespace Xceed.Wpf.DataGrid
       if (!this.IsEnabled)
         return false;
 
-      ColumnBase parentColumn = this.ParentColumn;
+      ColumnBase parentColumn = ParentColumn;
       if ((parentColumn == null) || (!parentColumn.AllowFilter))
         return false;
 
       return true;
     }
 
+    /// <summary>
+    /// Filter Items have been modified (checkbox clicked)
+    /// </summary>
     private void FilterItemChanged(object sender, PropertyChangedEventArgs e)
     {
-      if (!this.CanDoFilter() || _isLoading)
+      if (!CanDoFilter() || _isLoading)
         return;
 
-      FilterRow fr = this.ParentRow as FilterRow;
-      DataGridContext dataGridContext = this.DataGridContext;
+      FilterRow fr = ParentRow as FilterRow;
+      DataGridContext dataGridContext = DataGridContext;
 
       Debug.Assert(dataGridContext != null);
 
