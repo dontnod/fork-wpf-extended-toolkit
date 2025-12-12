@@ -30,8 +30,9 @@ namespace Xceed.Wpf.DataGrid
 
   public class ListFilter : IFilter
   {
+    public static readonly string NO_VALUE_FILTER = "None";
+
     public List<string> Filters { get; set; } = new List<string>();
-    public bool ShouldSerializeFilters() => Filters.Any();
 
     public ListFilter(List<string> filters)
     {
@@ -44,10 +45,12 @@ namespace Xceed.Wpf.DataGrid
       if (Filters.Count == 0)
         return true;
 
+      // Get value of current objects property
       string value = string.Empty;
 
-      var propertyParts = propertyName.Split(':');
       // check is nested property
+      var propertyParts = propertyName.Split(':');
+      // e.g. dictProperty:key
       if (propertyParts.Length == 2)
       {
         var dicProperty = obj.GetType().GetProperty(propertyParts[0])?.GetValue(obj, null) as Dictionary<string, string>;
@@ -55,6 +58,7 @@ namespace Xceed.Wpf.DataGrid
           return false;
         dicProperty.TryGetValue(propertyParts[1], out value);
       }
+      // e.g nestedDictProperty:firstKey:secondKey
       else if (propertyParts.Length == 3)
       {
         var dicProperty = obj.GetType().GetProperty(propertyParts[0])?.GetValue(obj, null) as Dictionary<string, Dictionary<string, string>>;
@@ -63,6 +67,7 @@ namespace Xceed.Wpf.DataGrid
         dicProperty.TryGetValue(propertyParts[1], out var subDicProp);
         subDicProp?.TryGetValue(propertyParts[2], out value);
       }
+      // simple property
       else
       {
         if (obj is ICustomTypeDescriptor objDesc)
@@ -79,6 +84,10 @@ namespace Xceed.Wpf.DataGrid
 
       if (value == null)
         return false;
+
+      // Checked the None option
+      if (Filters.Contains(NO_VALUE_FILTER) && value == "")
+        return true;
 
       return Filters.Any(x => x == value);
     }
